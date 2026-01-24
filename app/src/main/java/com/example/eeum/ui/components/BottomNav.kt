@@ -1,5 +1,6 @@
 package com.example.eeum.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -13,7 +14,9 @@ import com.example.eeum.R
 
 @Composable
 fun BottomNav(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onFeed: () -> Unit = {},
+    onShare: () -> Unit = {}
 ) {
     Row(
         modifier = modifier,
@@ -22,11 +25,13 @@ fun BottomNav(
     ) {
         NavItem(
             icon = { Icon(painterResource(R.drawable.ic_feed), contentDescription = null) },
-            label = "feed"
+            label = "feed",
+            onClick = onFeed
         )
         NavItem(
             icon = { Icon(painterResource(R.drawable.ic_share), contentDescription = null) },
-            label = "share"
+            label = "share",
+            onClick = onShare
         )
     }
 }
@@ -34,10 +39,12 @@ fun BottomNav(
 @Composable
 private fun NavItem(
     icon: @Composable () -> Unit,
-    label: String
+    label: String,
+    onClick: () -> Unit
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable { onClick() }
     ) {
         Box(Modifier.size(24.dp), contentAlignment = Alignment.Center) {
             icon()
