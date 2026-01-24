@@ -34,38 +34,38 @@ fun HomeDefaultScreen(onShake: () -> Unit) {
             fontWeight = FontWeight.Medium,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 12.dp)
+                .padding(top = 16.dp)
         )
 
         // ✅ 곡선: "Top에 붙이지 말고" 내려서, 길게/얇게
         CurveDecoration(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(92.dp)          // 🔥 얇게
+                .height(72.dp)          // 🔥 얇게
                 .align(Alignment.TopStart)
-                .padding(top = 72.dp)   // 🔥 원본처럼 타이틀 아래에 위치
-                .offset(x = (-75).dp)   // 🔥 왼쪽이 화면 밖에서 시작하는 느낌
+                .padding(top = 76.dp)   // 🔥 원본처럼 타이틀 아래에 위치
+                .offset(x = (-64).dp)   // 🔥 왼쪽이 화면 밖에서 시작하는 느낌
         )
 
         // ✅ Shake 텍스트 블록: 원본 위치로 내려서 고정
         Column(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = 24.dp, end = 24.dp, top = 260.dp) // 🔥 여기서 대부분 결정됨
+                .padding(start = 24.dp, end = 24.dp, top = 252.dp) // 🔥 여기서 대부분 결정됨
         ) {
             Text(
                 text = "Shake",
-                fontSize = 64.sp,
+                fontSize = 60.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-1).sp
             )
 
-            Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(12.dp))
 
             Text(
                 text = "to receive someone’s letter\nanswer with music",
                 fontSize = 14.sp,
-                lineHeight = 20.sp,
+                lineHeight = 21.sp,
                 color = Color(0xFF9A9A9A)
             )
         }
@@ -76,7 +76,7 @@ fun HomeDefaultScreen(onShake: () -> Unit) {
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 18.dp)
                 .fillMaxWidth()
-                .padding(horizontal = 56.dp)
+                .padding(horizontal = 64.dp)
         )
     }
 }
