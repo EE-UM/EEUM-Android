@@ -20,7 +20,10 @@ import com.example.eeum.ui.components.BottomNav
 import com.example.eeum.ui.components.CurveDecoration
 
 @Composable
-fun HomeShakenScreen(onReply: () -> Unit) {
+fun HomeShakenScreen(
+    onReply: () -> Unit,
+    onShare: () -> Unit
+) {
     val bg = Color(0xFFF7F6F2)
 
     Box(
@@ -100,7 +103,8 @@ fun HomeShakenScreen(onReply: () -> Unit) {
             BottomNav(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 64.dp, vertical = 6.dp)
+                    .padding(horizontal = 64.dp, vertical = 6.dp),
+                onShare = onShare
             )
         }
     }
