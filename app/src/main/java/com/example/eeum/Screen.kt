@@ -3,5 +3,7 @@ package com.example.eeum
 enum class Screen {
     SPLASH,
     HOME_DEFAULT,
-    HOME_SHAKEN
+    HOME_SHAKEN,
+    SHARE_DEFAULT,
+    SHARE_MUSIC
 }
