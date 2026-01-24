@@ -5,6 +5,7 @@ import com.example.eeum.ui.*
 
 @Composable
 fun AppRoot() {
+
     var screen by remember { mutableStateOf(Screen.SPLASH) }
 
     when (screen) {
