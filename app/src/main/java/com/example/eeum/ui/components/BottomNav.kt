@@ -1,0 +1,48 @@
+package com.example.eeum.ui.components
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.eeum.R
+
+@Composable
+fun BottomNav(
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Bottom
+    ) {
+        NavItem(
+            icon = { Icon(painterResource(R.drawable.ic_feed), contentDescription = null) },
+            label = "feed"
+        )
+        NavItem(
+            icon = { Icon(painterResource(R.drawable.ic_share), contentDescription = null) },
+            label = "share"
+        )
+    }
+}
+
+@Composable
+private fun NavItem(
+    icon: @Composable () -> Unit,
+    label: String
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(Modifier.size(24.dp), contentAlignment = Alignment.Center) {
+            icon()
+        }
+        Spacer(Modifier.height(6.dp))
+        Text(label, fontSize = 10.sp)
+    }
+}
