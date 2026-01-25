@@ -1,6 +1,7 @@
 package com.example.eeum.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,10 +35,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.eeum.data.MusicTrack
 
 @Composable
@@ -48,7 +54,9 @@ fun ShareDefaultScreen(
 ) {
     val bg = Color(0xFFF7F6F2)
     var title by remember { mutableStateOf("") }
-    val maxLength = 200
+    var story by remember { mutableStateOf("") }
+    val titleMaxLength = 50
+    val storyMaxLength = 200
 
     Column(
         modifier = Modifier
@@ -106,19 +114,37 @@ fun ShareDefaultScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.White, RoundedCornerShape(16.dp))
+                    .clickable { onOpenMusicSearch() }
                     .padding(16.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(220.dp)
-                        .background(Color(0xFFE6E2DC), RoundedCornerShape(12.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "앨범 이미지",
-                        fontSize = 12.sp,
-                        color = Color(0xFF9A9A9A)
+                val artworkUrl = selectedTrack.artworkUrl
+                if (artworkUrl.isNullOrBlank()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(220.dp)
+                            .background(Color(0xFFE6E2DC), RoundedCornerShape(12.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "앨범 이미지",
+                            fontSize = 12.sp,
+                            color = Color(0xFF9A9A9A)
+                        )
+                    }
+                } else {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(artworkUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "${selectedTrack.title} 앨범 이미지",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(220.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFFE6E2DC))
                     )
                 }
                 Spacer(Modifier.height(12.dp))
@@ -127,25 +153,18 @@ fun ShareDefaultScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
-                        Text(
-                            text = selectedTrack.title,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF1D1D1D)
-                        )
-                        Text(
-                            text = selectedTrack.artist,
-                            fontSize = 13.sp,
-                            color = Color(0xFF777777)
-                        )
-                    }
-                    IconButton(onClick = onOpenMusicSearch) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "change music"
-                        )
-                    }
+                    Text(
+                        text = selectedTrack.title,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFFE24A3B),
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = selectedTrack.artist,
+                        fontSize = 13.sp,
+                        color = Color(0xFF1D1D1D)
+                    )
                 }
             }
         }
@@ -162,7 +181,7 @@ fun ShareDefaultScreen(
 
         TextField(
             value = title,
-            onValueChange = { title = it.take(maxLength) },
+            onValueChange = { title = it.take(titleMaxLength) },
             placeholder = { Text("사연의 제목") },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
@@ -176,10 +195,30 @@ fun ShareDefaultScreen(
             singleLine = true
         )
 
+        Spacer(Modifier.height(12.dp))
+
+        TextField(
+            value = story,
+            onValueChange = { story = it.take(storyMaxLength) },
+            placeholder = { Text("사연의 내용") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(140.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                disabledContainerColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            shape = RoundedCornerShape(12.dp),
+            singleLine = false
+        )
+
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = "${title.length}/$maxLength",
+            text = "${story.length}/$storyMaxLength",
             fontSize = 12.sp,
             color = Color(0xFF999999)
         )
