@@ -1,6 +1,9 @@
 package com.example.eeum.data
 
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 data class MusicSearchResponse(
@@ -29,4 +32,15 @@ interface MusicApi {
         @Query("types") types: String,
         @Query("limit") limit: Int
     ): MusicSearchResponse
+
+    @POST("user/test")
+    suspend fun loginForTest(
+        @Body request: TestLoginRequest
+    ): ApiResponse<TestLoginResponse>
+
+    @POST("posts")
+    suspend fun createPost(
+        @Header("Authorization") authorization: String,
+        @Body request: CreatePostRequest
+    ): ApiResponse<CreatePostResponse>
 }

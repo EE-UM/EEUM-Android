@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,13 +51,20 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.eeum.data.CompletionType
+import com.example.eeum.data.CreatePostRequest
 import com.example.eeum.data.MusicTrack
+import com.example.eeum.data.ShareRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ShareDefaultScreen(
     onBack: () -> Unit,
     onOpenMusicSearch: () -> Unit,
-    selectedTrack: MusicTrack?
+    selectedTrack: MusicTrack?,
+    repository: ShareRepository = ShareRepository()
 ) {
     val bg = Color(0xFFF7F6F2)
     var title by remember { mutableStateOf("") }
@@ -65,6 +73,9 @@ fun ShareDefaultScreen(
     var selectedCompletion by remember { mutableStateOf(ShareCompletionOption.AUTO) }
     var selectedMaxComments by remember { mutableStateOf(20) }
     var isDropdownExpanded by remember { mutableStateOf(false) }
+    var shareStatus by remember { mutableStateOf<ShareStatus?>(null) }
+    var isSubmitting by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
     val titleMaxLength = 50
     val storyMaxLength = 200
     val maxCommentOptions = listOf(10, 20, 30, 40)
@@ -249,6 +260,14 @@ fun ShareDefaultScreen(
         ) {
             Text("share", fontSize = 14.sp)
         }
+        shareStatus?.let { status ->
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = status.message,
+                fontSize = 12.sp,
+                color = status.color
+            )
+        }
         Spacer(Modifier.height(12.dp))
     }
 
@@ -382,7 +401,72 @@ fun ShareDefaultScreen(
                             text = "공유",
                             fontSize = 14.sp,
                             color = Color(0xFF1D1D1D),
-                            modifier = Modifier.clickable { isSettingsVisible = false }
+                            modifier = Modifier.clickable(enabled = !isSubmitting) {
+                                if (isSubmitting) return@clickable
+                                when {
+                                    selectedTrack == null -> {
+                                        shareStatus = ShareStatus(
+                                            message = "곡을 선택해 주세요.",
+                                            color = Color(0xFFB00020)
+                                        )
+                                    }
+                                    title.isBlank() -> {
+                                        shareStatus = ShareStatus(
+                                            message = "사연의 제목을 입력해 주세요.",
+                                            color = Color(0xFFB00020)
+                                        )
+                                    }
+                                    story.isBlank() -> {
+                                        shareStatus = ShareStatus(
+                                            message = "사연의 내용을 입력해 주세요.",
+                                            color = Color(0xFFB00020)
+                                        )
+                                    }
+                                    else -> {
+                                        isSubmitting = true
+                                        shareStatus = ShareStatus(
+                                            message = "공유 중...",
+                                            color = Color(0xFF777777)
+                                        )
+                                        val completionType = if (selectedCompletion == ShareCompletionOption.AUTO) {
+                                            CompletionType.AUTO
+                                        } else {
+                                            CompletionType.MANUAL
+                                        }
+                                        coroutineScope.launch {
+                                            val request = CreatePostRequest(
+                                                title = title.trim(),
+                                                content = story.trim(),
+                                                albumName = selectedTrack.album,
+                                                songName = selectedTrack.title,
+                                                artistName = selectedTrack.artist,
+                                                artworkUrl = selectedTrack.artworkUrl,
+                                                appleMusicUrl = selectedTrack.previewUrl,
+                                                completionType = completionType.value,
+                                                commentCountLimit = selectedMaxComments
+                                            )
+                                            val result = withContext(Dispatchers.IO) {
+                                                repository.sharePlaylist(request)
+                                            }
+                                            result
+                                                .onSuccess {
+                                                    shareStatus = ShareStatus(
+                                                        message = "플레이리스트가 공유되었습니다.",
+                                                        color = Color(0xFF1D1D1D)
+                                                    )
+                                                    isSettingsVisible = false
+                                                }
+                                                .onFailure {
+                                                    shareStatus = ShareStatus(
+                                                        message = "공유에 실패했어요. 다시 시도해 주세요.",
+                                                        color = Color(0xFFB00020)
+                                                    )
+                                                }
+                                            isSubmitting = false
+                                        }
+                                    }
+                                }
+                            }
                         )
                     }
                 }
@@ -395,3 +479,8 @@ private enum class ShareCompletionOption {
     AUTO,
     MANUAL
 }
+
+private data class ShareStatus(
+    val message: String,
+    val color: Color
+)

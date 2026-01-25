@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object MusicApiProvider {
-    private const val BASE_URL = "https://eeum.xyz/"
+    private const val BASE_URL = "https://www.eeum.xyz/dev/"
 
     private val gson: Gson = GsonBuilder().create()
 
