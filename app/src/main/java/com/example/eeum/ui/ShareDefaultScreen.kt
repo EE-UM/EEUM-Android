@@ -54,7 +54,9 @@ fun ShareDefaultScreen(
 ) {
     val bg = Color(0xFFF7F6F2)
     var title by remember { mutableStateOf("") }
-    val maxLength = 200
+    var story by remember { mutableStateOf("") }
+    val titleMaxLength = 50
+    val storyMaxLength = 200
 
     Column(
         modifier = Modifier
@@ -179,7 +181,7 @@ fun ShareDefaultScreen(
 
         TextField(
             value = title,
-            onValueChange = { title = it.take(maxLength) },
+            onValueChange = { title = it.take(titleMaxLength) },
             placeholder = { Text("사연의 제목") },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
@@ -193,10 +195,30 @@ fun ShareDefaultScreen(
             singleLine = true
         )
 
+        Spacer(Modifier.height(12.dp))
+
+        TextField(
+            value = story,
+            onValueChange = { story = it.take(storyMaxLength) },
+            placeholder = { Text("사연의 내용") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(140.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                disabledContainerColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            shape = RoundedCornerShape(12.dp),
+            singleLine = false
+        )
+
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = "${title.length}/$maxLength",
+            text = "${story.length}/$storyMaxLength",
             fontSize = 12.sp,
             color = Color(0xFF999999)
         )
