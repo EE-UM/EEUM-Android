@@ -1,6 +1,7 @@
 package com.example.eeum.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,10 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
@@ -24,15 +29,14 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +46,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.eeum.data.MusicTrack
@@ -55,8 +61,13 @@ fun ShareDefaultScreen(
     val bg = Color(0xFFF7F6F2)
     var title by remember { mutableStateOf("") }
     var story by remember { mutableStateOf("") }
+    var isSettingsVisible by remember { mutableStateOf(false) }
+    var selectedCompletion by remember { mutableStateOf(ShareCompletionOption.AUTO) }
+    var selectedMaxComments by remember { mutableStateOf(20) }
+    var isDropdownExpanded by remember { mutableStateOf(false) }
     val titleMaxLength = 50
     val storyMaxLength = 200
+    val maxCommentOptions = listOf(10, 20, 30, 40)
 
     Column(
         modifier = Modifier
@@ -226,7 +237,7 @@ fun ShareDefaultScreen(
         Spacer(Modifier.weight(1f))
 
         Button(
-            onClick = { },
+            onClick = { isSettingsVisible = true },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -240,4 +251,147 @@ fun ShareDefaultScreen(
         }
         Spacer(Modifier.height(12.dp))
     }
+
+    if (isSettingsVisible) {
+        Dialog(
+            onDismissRequest = { isSettingsVisible = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 32.dp)
+                        .background(Color(0xFFF9F7F2), RoundedCornerShape(20.dp))
+                        .padding(20.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = "설정",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+
+                    Spacer(Modifier.height(20.dp))
+
+                    Row(verticalAlignment = Alignment.Top) {
+                        RadioButton(
+                            selected = selectedCompletion == ShareCompletionOption.AUTO,
+                            onClick = { selectedCompletion = ShareCompletionOption.AUTO }
+                        )
+                        Column(modifier = Modifier.padding(start = 4.dp)) {
+                            Text(
+                                text = "플레이리스트 자동 완료",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                text = "추가된 댓글 및 음악 수를 설정하면\n자동으로 플레이리스트가 완성처리됩니다.",
+                                fontSize = 12.sp,
+                                color = Color(0xFF7A7A7A)
+                            )
+                            Spacer(Modifier.height(12.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .border(1.dp, Color(0xFFE0DED8), RoundedCornerShape(12.dp))
+                                    .padding(horizontal = 12.dp, vertical = 10.dp)
+                                    .clickable {
+                                        if (selectedCompletion == ShareCompletionOption.AUTO) {
+                                            isDropdownExpanded = true
+                                        }
+                                    },
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "최대 댓글 갯수",
+                                    fontSize = 12.sp,
+                                    color = Color(0xFF7A7A7A)
+                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = "${selectedMaxComments}개",
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Spacer(Modifier.width(6.dp))
+                                    Text(text = "▼", fontSize = 10.sp)
+                                }
+                            }
+                            DropdownMenu(
+                                expanded = isDropdownExpanded,
+                                onDismissRequest = { isDropdownExpanded = false }
+                            ) {
+                                maxCommentOptions.forEach { option ->
+                                    DropdownMenuItem(
+                                        text = { Text("${option}개") },
+                                        onClick = {
+                                            selectedMaxComments = option
+                                            isDropdownExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(Modifier.height(16.dp))
+
+                    Row(verticalAlignment = Alignment.Top) {
+                        RadioButton(
+                            selected = selectedCompletion == ShareCompletionOption.MANUAL,
+                            onClick = { selectedCompletion = ShareCompletionOption.MANUAL }
+                        )
+                        Column(modifier = Modifier.padding(start = 4.dp)) {
+                            Text(
+                                text = "수동 완료 처리",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                text = "inbox 내 작업한 사연에서 직접\n플레이리스트를 완료할 수 있습니다.",
+                                fontSize = 12.sp,
+                                color = Color(0xFF7A7A7A)
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(20.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "취소",
+                            fontSize = 14.sp,
+                            color = Color(0xFF1D1D1D),
+                            modifier = Modifier.clickable { isSettingsVisible = false }
+                        )
+                        Text(
+                            text = "공유",
+                            fontSize = 14.sp,
+                            color = Color(0xFF1D1D1D),
+                            modifier = Modifier.clickable { isSettingsVisible = false }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+private enum class ShareCompletionOption {
+    AUTO,
+    MANUAL
 }
