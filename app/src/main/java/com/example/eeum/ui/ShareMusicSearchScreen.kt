@@ -34,13 +34,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.eeum.data.MusicRepository
 import com.example.eeum.data.MusicTrack
 import kotlinx.coroutines.Dispatchers
@@ -183,10 +188,17 @@ fun ShareMusicSearchScreen(
                                 .padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Spacer(
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(track.artworkUrl)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = "${track.title} 앨범 이미지",
+                                contentScale = ContentScale.Crop,
                                 modifier = Modifier
                                     .size(44.dp)
-                                    .background(Color(0xFFE6E2DC), RoundedCornerShape(8.dp))
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(Color(0xFFE6E2DC))
                             )
                             Spacer(Modifier.width(12.dp))
                             Column {
