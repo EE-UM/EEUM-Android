@@ -1,7 +1,19 @@
 package com.example.eeum.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,11 +38,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.eeum.data.MusicTrack
 
 @Composable
 fun ShareDefaultScreen(
     onBack: () -> Unit,
-    onOpenMusicSearch: () -> Unit
+    onOpenMusicSearch: () -> Unit,
+    selectedTrack: MusicTrack?
 ) {
     val bg = Color(0xFFF7F6F2)
     var title by remember { mutableStateOf("") }
@@ -62,29 +76,78 @@ fun ShareDefaultScreen(
 
         Spacer(Modifier.height(20.dp))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .background(Color(0xFFE6E2DC), CircleShape),
-                contentAlignment = Alignment.Center
+        if (selectedTrack == null) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onOpenMusicSearch) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "search music"
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .background(Color(0xFFE6E2DC), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    IconButton(onClick = onOpenMusicSearch) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "search music"
+                        )
+                    }
+                }
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = "사연의 제목을 작성해 주세요",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF1D1D1D)
+                )
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White, RoundedCornerShape(16.dp))
+                    .padding(16.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp)
+                        .background(Color(0xFFE6E2DC), RoundedCornerShape(12.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "앨범 이미지",
+                        fontSize = 12.sp,
+                        color = Color(0xFF9A9A9A)
                     )
                 }
+                Spacer(Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = selectedTrack.title,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF1D1D1D)
+                        )
+                        Text(
+                            text = selectedTrack.artist,
+                            fontSize = 13.sp,
+                            color = Color(0xFF777777)
+                        )
+                    }
+                    IconButton(onClick = onOpenMusicSearch) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "change music"
+                        )
+                    }
+                }
             }
-            Spacer(Modifier.width(12.dp))
-            Text(
-                text = "사연의 제목을 작성해 주세요",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1D1D1D)
-            )
         }
 
         Spacer(Modifier.height(16.dp))
