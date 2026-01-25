@@ -1,6 +1,7 @@
 package com.example.eeum.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -50,6 +51,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun ShareMusicSearchScreen(
     onBack: () -> Unit,
+    onSelectTrack: (MusicTrack) -> Unit,
     repository: MusicRepository = MusicRepository()
 ) {
     val bg = Color(0xFFF7F6F2)
@@ -176,6 +178,7 @@ fun ShareMusicSearchScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .clickable { onSelectTrack(track) }
                                 .background(Color.White, RoundedCornerShape(12.dp))
                                 .padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically
