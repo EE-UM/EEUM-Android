@@ -17,6 +17,7 @@ import com.example.eeum.ui.components.CurveDecoration
 @Composable
 fun HomeDefaultScreen(
     onShake: () -> Unit,
+    onFeed: () -> Unit,
     onShare: () -> Unit
 ) {
     val bg = Color(0xFFF7F6F2) // 원본 느낌의 아이보리
@@ -80,6 +81,7 @@ fun HomeDefaultScreen(
                 .padding(bottom = 18.dp)
                 .fillMaxWidth()
                 .padding(horizontal = 64.dp),
+            onFeed = onFeed,
             onShare = onShare
         )
     }
