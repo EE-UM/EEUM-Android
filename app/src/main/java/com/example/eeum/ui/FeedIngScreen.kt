@@ -1,5 +1,6 @@
 package com.example.eeum.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,6 +51,7 @@ import com.example.eeum.data.IngPost
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FeedIngScreen(
     onBack: () -> Unit,
@@ -57,26 +59,31 @@ fun FeedIngScreen(
 ) {
     val bg = Color(0xFFF7F6F2)
     val coroutineScope = rememberCoroutineScope()
+
     var posts by remember { mutableStateOf<List<IngPost>>(emptyList()) }
-    val pagerState = rememberPagerState(pageCount = { posts.size })
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var hasMore by remember { mutableStateOf(true) }
+
     val pageSize = 10
+    val pagerState = rememberPagerState(pageCount = { posts.size })
 
     fun loadMore() {
         if (isLoading || !hasMore) return
         coroutineScope.launch {
             isLoading = true
             errorMessage = null
+
             val lastPostId = posts.lastOrNull()?.postId
             val result = repository.fetchIngPosts(pageSize, lastPostId)
+
             result.onSuccess { newItems ->
                 posts = posts + newItems
                 hasMore = newItems.isNotEmpty()
             }.onFailure { error ->
                 errorMessage = error.message ?: "피드를 불러오지 못했어요."
             }
+
             isLoading = false
         }
     }
@@ -88,6 +95,7 @@ fun FeedIngScreen(
     LaunchedEffect(pagerState, posts.size, hasMore, isLoading) {
         snapshotFlow { pagerState.currentPage }
             .collectLatest { currentPage ->
+                if (posts.isEmpty()) return@collectLatest
                 val shouldLoadMore = currentPage >= posts.lastIndex - 2
                 if (shouldLoadMore) loadMore()
             }
@@ -151,16 +159,46 @@ fun FeedIngScreen(
 
         Spacer(Modifier.height(12.dp))
 
-        HorizontalPager(
-            state = pagerState,
-            contentPadding = PaddingValues(horizontal = 48.dp),
-            pageSpacing = 20.dp,
-            modifier = Modifier.fillMaxWidth()
-        ) { page ->
-            FeedIngCard(post = posts[page])
+        when {
+            posts.isNotEmpty() -> {
+                HorizontalPager(
+                    state = pagerState,
+                    contentPadding = PaddingValues(horizontal = 48.dp),
+                    pageSpacing = 20.dp,
+                    modifier = Modifier.fillMaxWidth()
+                ) { page ->
+                    FeedIngCard(post = posts[page])
+                }
+            }
+
+            isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color(0xFF1D1D1D))
+                }
+            }
+
+            else -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "표시할 피드가 없어요.",
+                        fontSize = 12.sp,
+                        color = Color(0xFF777777)
+                    )
+                }
+            }
         }
 
-        if (isLoading) {
+        if (isLoading && posts.isNotEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
