@@ -39,17 +39,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.eeum.data.FeedRepository
 import com.example.eeum.data.IngPost
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -167,7 +170,23 @@ fun FeedIngScreen(
                     pageSpacing = 20.dp,
                     modifier = Modifier.fillMaxWidth()
                 ) { page ->
-                    FeedIngCard(post = posts[page])
+                    val pageOffset = pagerState.calculateCurrentOffsetForPage(page)
+                    val clampedOffset = pageOffset.coerceIn(-1f, 1f)
+                    val absOffset = clampedOffset.absoluteValue
+                    val scale = lerp(start = 0.9f, stop = 1f, fraction = 1f - absOffset)
+                    val alpha = lerp(start = 0.65f, stop = 1f, fraction = 1f - absOffset)
+                    val rotation = 6f * clampedOffset
+
+                    FeedIngCard(
+                        post = posts[page],
+                        modifier = Modifier.graphicsLayer {
+                            scaleX = scale
+                            scaleY = scale
+                            this.alpha = alpha
+                            rotationZ = rotation
+                            translationX = clampedOffset * 26f
+                        }
+                    )
                 }
             }
 
@@ -220,10 +239,13 @@ fun FeedIngScreen(
 }
 
 @Composable
-private fun FeedIngCard(post: IngPost) {
+private fun FeedIngCard(
+    post: IngPost,
+    modifier: Modifier = Modifier
+) {
     Card(
         shape = RoundedCornerShape(18.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Column(
             modifier = Modifier
