@@ -43,4 +43,10 @@ interface MusicApi {
         @Header("Authorization") authorization: String,
         @Body request: CreatePostRequest
     ): ApiResponse<CreatePostResponse>
+
+    @GET("posts/ing/infinite-scroll")
+    suspend fun fetchIngPosts(
+        @Query("pageSize") pageSize: Int,
+        @Query("lastPostId") lastPostId: Long?
+    ): ApiResponse<List<IngPost>>
 }

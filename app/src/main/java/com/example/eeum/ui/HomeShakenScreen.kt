@@ -22,6 +22,7 @@ import com.example.eeum.ui.components.CurveDecoration
 @Composable
 fun HomeShakenScreen(
     onReply: () -> Unit,
+    onFeed: () -> Unit,
     onShare: () -> Unit
 ) {
     val bg = Color(0xFFF7F6F2)
@@ -104,6 +105,7 @@ fun HomeShakenScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 64.dp, vertical = 6.dp),
+                onFeed = onFeed,
                 onShare = onShare
             )
         }

@@ -17,13 +17,20 @@ fun AppRoot() {
         Screen.HOME_DEFAULT ->
             HomeDefaultScreen(
                 onShake = { screen = Screen.HOME_SHAKEN },
+                onFeed = { screen = Screen.FEED_ING },
                 onShare = { screen = Screen.SHARE_DEFAULT }
             )
 
         Screen.HOME_SHAKEN ->
             HomeShakenScreen(
                 onReply = { /* view 이후 */ },
+                onFeed = { screen = Screen.FEED_ING },
                 onShare = { screen = Screen.SHARE_DEFAULT }
+            )
+
+        Screen.FEED_ING ->
+            FeedIngScreen(
+                onBack = { screen = Screen.HOME_DEFAULT }
             )
 
         Screen.SHARE_DEFAULT ->

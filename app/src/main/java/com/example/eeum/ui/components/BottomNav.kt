@@ -15,6 +15,7 @@ import com.example.eeum.R
 @Composable
 fun BottomNav(
     modifier: Modifier = Modifier,
+    onFeed: (() -> Unit)? = null,
     onShare: (() -> Unit)? = null
 ) {
     Row(
@@ -24,7 +25,8 @@ fun BottomNav(
     ) {
         NavItem(
             icon = { Icon(painterResource(R.drawable.ic_feed), contentDescription = null) },
-            label = "feed"
+            label = "feed",
+            onClick = onFeed
         )
         NavItem(
             icon = { Icon(painterResource(R.drawable.ic_share), contentDescription = null) },
