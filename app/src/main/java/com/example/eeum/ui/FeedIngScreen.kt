@@ -33,8 +33,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -170,8 +170,10 @@ fun FeedIngScreen(
                     pageSpacing = 20.dp,
                     modifier = Modifier.fillMaxWidth()
                 ) { page ->
+                    // ✅ Conflict resolved: use a version-safe offset formula
                     val pageOffset =
                         (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+
                     val clampedOffset = pageOffset.coerceIn(-1f, 1f)
                     val absOffset = clampedOffset.absoluteValue
                     val scale = lerp(start = 0.9f, stop = 1f, fraction = 1f - absOffset)
