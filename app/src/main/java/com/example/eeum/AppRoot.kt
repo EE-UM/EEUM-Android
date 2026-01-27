@@ -24,7 +24,10 @@ fun AppRoot() {
 
         Screen.HOME_SHAKEN ->
             HomeShakenScreen(
-                onReply = { /* view 이후 */ },
+                onView = { postId ->
+                    selectedPostId = postId
+                    screen = Screen.POST_DETAIL
+                },
                 onFeed = { screen = Screen.FEED_ING },
                 onShare = { screen = Screen.SHARE_DEFAULT }
             )

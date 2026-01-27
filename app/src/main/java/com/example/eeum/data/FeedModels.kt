@@ -11,3 +11,10 @@ data class IngPost(
     val createdAt: String? = null,
     val isCompleted: Boolean = false
 )
+
+data class RandomPost(
+    val postId: Long,
+    val writerId: Long,
+    val title: String,
+    val content: String
+)
