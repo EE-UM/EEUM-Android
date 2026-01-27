@@ -123,7 +123,7 @@ fun PostDetailScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(240.dp)
+                                .aspectRatio(4f / 3f)
                                 .background(Color(0xFFE6E2DC), RoundedCornerShape(16.dp)),
                             contentAlignment = Alignment.Center
                         ) {
@@ -143,7 +143,7 @@ fun PostDetailScreen(
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(240.dp)
+                                .aspectRatio(4f / 3f)
                                 .clip(RoundedCornerShape(16.dp))
                                 .background(Color(0xFFE6E2DC))
                         )
@@ -158,13 +158,13 @@ fun PostDetailScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .heightIn(max = 520.dp)
+                    .heightIn(max = 500.dp)
                     .background(
                         Color(0xFFF7F6F2),
                         RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
                     )
                     .navigationBarsPadding()
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
+                    .padding(horizontal = 20.dp, vertical = 14.dp)
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -314,40 +314,28 @@ private fun CommentCard(
     Row(
         modifier = modifier
             .background(Color.White, RoundedCornerShape(12.dp))
-            .padding(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = comment.username ?: "익명",
+                text = comment.songName ?: "곡 제목",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1D1D1D)
+                color = Color(0xFF1D1D1D),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
-            val trackInfo = listOfNotNull(comment.songName, comment.artistName, comment.albumName)
-                .take(2)
-                .joinToString(" • ")
-            if (trackInfo.isNotBlank()) {
-                Text(
-                    text = trackInfo,
-                    fontSize = 11.sp,
-                    color = Color(0xFF777777),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
             Text(
-                text = comment.content,
-                fontSize = 12.sp,
-                color = Color(0xFF555555),
-                lineHeight = 18.sp,
-                maxLines = 3,
+                text = comment.artistName ?: "아티스트",
+                fontSize = 11.sp,
+                color = Color(0xFF777777),
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
@@ -356,7 +344,7 @@ private fun CommentCard(
         if (artworkUrl.isNullOrBlank()) {
             Box(
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(56.dp)
                     .background(Color(0xFFE6E2DC), RoundedCornerShape(10.dp)),
                 contentAlignment = Alignment.Center
             ) {
@@ -375,7 +363,7 @@ private fun CommentCard(
                 contentDescription = comment.songName ?: "댓글 앨범 이미지",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(56.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(Color(0xFFE6E2DC))
             )
