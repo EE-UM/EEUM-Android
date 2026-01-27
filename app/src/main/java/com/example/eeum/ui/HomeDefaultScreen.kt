@@ -1,5 +1,6 @@
 package com.example.eeum.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource
+import com.example.eeum.R
 import com.example.eeum.ui.components.BottomNav
 import com.example.eeum.ui.components.CurveDecoration
 
@@ -41,6 +44,15 @@ fun HomeDefaultScreen(
                 .padding(top = 16.dp)
         )
 
+        Image(
+            painter = painterResource(id = R.drawable.ic_setting),
+            contentDescription = "settings",
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 16.dp, end = 20.dp)
+                .size(22.dp)
+        )
+
         // ✅ 곡선: "Top에 붙이지 말고" 내려서, 길게/얇게
         CurveDecoration(
             modifier = Modifier
@@ -57,12 +69,22 @@ fun HomeDefaultScreen(
                 .align(Alignment.TopStart)
                 .padding(start = 24.dp, end = 24.dp, top = 252.dp) // 🔥 여기서 대부분 결정됨
         ) {
-            Text(
-                text = "Shake",
-                fontSize = 60.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = (-1).sp
-            )
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text(
+                    text = "Shake",
+                    fontSize = 60.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = (-1).sp
+                )
+                Spacer(Modifier.width(6.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.ic_eeum),
+                    contentDescription = "eeum icon",
+                    modifier = Modifier
+                        .size(20.dp)
+                        .padding(bottom = 10.dp)
+                )
+            }
 
             Spacer(Modifier.height(12.dp))
 
