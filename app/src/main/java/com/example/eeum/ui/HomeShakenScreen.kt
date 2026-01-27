@@ -10,22 +10,41 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.eeum.data.FeedRepository
+import com.example.eeum.data.RandomPost
 import com.example.eeum.ui.components.BottomNav
 import com.example.eeum.ui.components.CurveDecoration
 
 @Composable
 fun HomeShakenScreen(
-    onReply: () -> Unit,
+    onView: (Long) -> Unit,
     onFeed: () -> Unit,
-    onShare: () -> Unit
+    onShare: () -> Unit,
+    repository: FeedRepository = FeedRepository()
 ) {
     val bg = Color(0xFFF7F6F2)
+    var randomPost by remember { mutableStateOf<RandomPost?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        isLoading = true
+        repository.fetchRandomPost()
+            .onSuccess { randomPost = it }
+            .onFailure { errorMessage = it.message ?: "랜덤 게시글을 불러오지 못했어요." }
+        isLoading = false
+    }
 
     Box(
         modifier = Modifier
@@ -60,32 +79,49 @@ fun HomeShakenScreen(
 
             Spacer(Modifier.height(28.dp))
 
-            Text(
-                text = "어머니께",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1D1D1D)
-            )
+            when {
+                isLoading -> {
+                    Text(
+                        text = "랜덤 스토리를 불러오는 중...",
+                        fontSize = 14.sp,
+                        color = Color(0xFF777777)
+                    )
+                }
+                errorMessage != null -> {
+                    Text(
+                        text = errorMessage.orEmpty(),
+                        fontSize = 14.sp,
+                        color = Color(0xFFB00020)
+                    )
+                }
+                randomPost != null -> {
+                    Text(
+                        text = randomPost!!.title,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF1D1D1D)
+                    )
 
-            Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(12.dp))
 
-            Text(
-                text =
-                    "어려서부터 우리 집은 가난했고 늘 더하는 의식 못 변한 적이 없었고...\n\n" +
-                        "어려서부터 우리 집은 가난했고 늘 더하는 의식 못 변한 적이 없었고...",
-                fontSize = 14.sp,
-                lineHeight = 21.sp,
-                color = Color(0xFF555555)
-            )
+                    Text(
+                        text = randomPost!!.content,
+                        fontSize = 14.sp,
+                        lineHeight = 21.sp,
+                        color = Color(0xFF555555)
+                    )
+                }
+            }
 
             Spacer(Modifier.weight(1f))
 
             Button(
-                onClick = onReply,
+                onClick = { randomPost?.let { onView(it.postId) } },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(24.dp),
+                enabled = !isLoading && randomPost != null,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF1D1D1D),
                     contentColor = Color.White
@@ -97,7 +133,7 @@ fun HomeShakenScreen(
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("reply", fontSize = 14.sp)
+                Text("view", fontSize = 14.sp)
             }
 
             Spacer(Modifier.height(12.dp))

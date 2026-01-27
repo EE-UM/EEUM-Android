@@ -55,4 +55,7 @@ interface MusicApi {
     suspend fun fetchPostDetail(
         @Path("postId") postId: Long
     ): ApiResponse<PostDetail>
+
+    @GET("posts/random")
+    suspend fun fetchRandomPost(): ApiResponse<RandomPost>
 }
