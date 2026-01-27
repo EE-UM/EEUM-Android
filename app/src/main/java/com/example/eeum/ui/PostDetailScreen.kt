@@ -119,33 +119,57 @@ fun PostDetailScreen(
                 detail != null -> {
                     val post = detail!!
                     val artworkUrl = post.artworkUrl
-                    if (artworkUrl.isNullOrBlank()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(240.dp)
-                                .background(Color(0xFFE6E2DC), RoundedCornerShape(16.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "앨범 이미지",
-                                fontSize = 12.sp,
-                                color = Color(0xFF9A9A9A)
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if (artworkUrl.isNullOrBlank()) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.62f)
+                                    .aspectRatio(1f)
+                                    .background(Color(0xFFE6E2DC), RoundedCornerShape(16.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "앨범 이미지",
+                                    fontSize = 12.sp,
+                                    color = Color(0xFF9A9A9A)
+                                )
+                            }
+                        } else {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(artworkUrl)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = "${post.title} 앨범 이미지",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxWidth(0.62f)
+                                    .aspectRatio(1f)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Color(0xFFE6E2DC))
                             )
                         }
-                    } else {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(artworkUrl)
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = "${post.title} 앨범 이미지",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(240.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Color(0xFFE6E2DC))
+
+                        Spacer(Modifier.height(12.dp))
+
+                        Text(
+                            text = post.songName ?: "곡 제목",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF1D1D1D),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        Text(
+                            text = post.artistName ?: "아티스트",
+                            fontSize = 12.sp,
+                            color = Color(0xFF777777),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -158,13 +182,13 @@ fun PostDetailScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .heightIn(max = 520.dp)
+                    .heightIn(max = 500.dp)
                     .background(
                         Color(0xFFF7F6F2),
                         RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
                     )
                     .navigationBarsPadding()
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
+                    .padding(horizontal = 20.dp, vertical = 14.dp)
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -177,25 +201,6 @@ fun PostDetailScreen(
                         .background(Color(0xFFE0DED7), RoundedCornerShape(2.dp))
                 )
 
-                // 곡 정보
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = "♪",
-                        fontSize = 12.sp,
-                        color = Color(0xFF777777)
-                    )
-                    Text(
-                        text = listOfNotNull(post.songName, post.artistName).joinToString(" • "),
-                        fontSize = 12.sp,
-                        color = Color(0xFF777777),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
                 // 제목
                 Text(
                     text = post.title,
@@ -203,17 +208,6 @@ fun PostDetailScreen(
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF1D1D1D)
                 )
-
-                // (codex) 아티스트 한 줄 표시가 필요하면 유지
-                if (!post.artistName.isNullOrBlank()) {
-                    Text(
-                        text = post.artistName!!,
-                        fontSize = 12.sp,
-                        color = Color(0xFF777777),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
 
                 // 본문
                 Text(
@@ -311,52 +305,17 @@ private fun CommentCard(
     comment: PostComment,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    Column(
         modifier = modifier
             .background(Color.White, RoundedCornerShape(12.dp))
-            .padding(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(12.dp)
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            Text(
-                text = comment.username ?: "익명",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1D1D1D)
-            )
-
-            val trackInfo = listOfNotNull(comment.songName, comment.artistName, comment.albumName)
-                .take(2)
-                .joinToString(" • ")
-            if (trackInfo.isNotBlank()) {
-                Text(
-                    text = trackInfo,
-                    fontSize = 11.sp,
-                    color = Color(0xFF777777),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            Text(
-                text = comment.content,
-                fontSize = 12.sp,
-                color = Color(0xFF555555),
-                lineHeight = 18.sp,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-
         val artworkUrl = comment.artworkUrl
         if (artworkUrl.isNullOrBlank()) {
             Box(
                 modifier = Modifier
-                    .size(64.dp)
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
                     .background(Color(0xFFE6E2DC), RoundedCornerShape(10.dp)),
                 contentAlignment = Alignment.Center
             ) {
@@ -375,10 +334,30 @@ private fun CommentCard(
                 contentDescription = comment.songName ?: "댓글 앨범 이미지",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(64.dp)
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
                     .clip(RoundedCornerShape(10.dp))
                     .background(Color(0xFFE6E2DC))
             )
         }
+
+        Spacer(Modifier.height(8.dp))
+
+        Text(
+            text = comment.songName ?: "곡 제목",
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color(0xFF1D1D1D),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        Text(
+            text = comment.artistName ?: "아티스트",
+            fontSize = 11.sp,
+            color = Color(0xFF777777),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
