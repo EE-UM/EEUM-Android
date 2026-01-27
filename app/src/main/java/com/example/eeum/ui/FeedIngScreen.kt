@@ -58,6 +58,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun FeedIngScreen(
     onBack: () -> Unit,
+    onOpenDetail: (Long) -> Unit,
     repository: FeedRepository = FeedRepository()
 ) {
     val bg = Color(0xFFF7F6F2)
@@ -182,6 +183,7 @@ fun FeedIngScreen(
 
                     FeedIngCard(
                         post = posts[page],
+                        onOpenDetail = onOpenDetail,
                         modifier = Modifier.graphicsLayer {
                             scaleX = scale
                             scaleY = scale
@@ -244,6 +246,7 @@ fun FeedIngScreen(
 @Composable
 private fun FeedIngCard(
     post: IngPost,
+    onOpenDetail: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -307,7 +310,7 @@ private fun FeedIngCard(
             Spacer(Modifier.height(12.dp))
 
             Button(
-                onClick = { },
+                onClick = { onOpenDetail(post.postId) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(44.dp),
