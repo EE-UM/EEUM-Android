@@ -21,6 +21,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Message
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -166,6 +168,7 @@ fun PostDetailScreen(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                // drag handle
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -193,7 +196,7 @@ fun PostDetailScreen(
                     )
                 }
 
-                // 제목/본문
+                // 제목
                 Text(
                     text = post.title,
                     fontSize = 16.sp,
@@ -201,6 +204,18 @@ fun PostDetailScreen(
                     color = Color(0xFF1D1D1D)
                 )
 
+                // (codex) 아티스트 한 줄 표시가 필요하면 유지
+                if (!post.artistName.isNullOrBlank()) {
+                    Text(
+                        text = post.artistName!!,
+                        fontSize = 12.sp,
+                        color = Color(0xFF777777),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                // 본문
                 Text(
                     text = post.content,
                     fontSize = 13.sp,
@@ -208,7 +223,25 @@ fun PostDetailScreen(
                     lineHeight = 19.sp
                 )
 
-                // 댓글 헤더 + 토글
+                // (codex) 좋아요/댓글 아이콘 Row
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.FavoriteBorder,
+                        contentDescription = "like",
+                        tint = Color(0xFF777777),
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Icon(
+                        imageVector = Icons.Filled.Message,
+                        contentDescription = "comment",
+                        tint = Color(0xFF777777),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+
+                // 댓글 헤더 + 토글 (main)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
