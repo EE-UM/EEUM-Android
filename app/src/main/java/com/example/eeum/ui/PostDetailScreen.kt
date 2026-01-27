@@ -1,6 +1,7 @@
 package com.example.eeum.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,6 +56,7 @@ fun PostDetailScreen(
     var detail by remember { mutableStateOf<PostDetail?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(true) }
+    var isGridView by remember { mutableStateOf(true) }
 
     LaunchedEffect(postId) {
         isLoading = true
@@ -103,6 +105,7 @@ fun PostDetailScreen(
                         color = Color(0xFF777777)
                     )
                 }
+
                 errorMessage != null -> {
                     Text(
                         text = errorMessage.orEmpty(),
@@ -110,6 +113,7 @@ fun PostDetailScreen(
                         color = Color(0xFFB00020)
                     )
                 }
+
                 detail != null -> {
                     val post = detail!!
                     val artworkUrl = post.artworkUrl
@@ -153,7 +157,10 @@ fun PostDetailScreen(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .heightIn(max = 520.dp)
-                    .background(Color(0xFFF7F6F2), RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                    .background(
+                        Color(0xFFF7F6F2),
+                        RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+                    )
                     .navigationBarsPadding()
                     .padding(horizontal = 20.dp, vertical = 16.dp)
                     .verticalScroll(rememberScrollState()),
@@ -167,6 +174,7 @@ fun PostDetailScreen(
                         .background(Color(0xFFE0DED7), RoundedCornerShape(2.dp))
                 )
 
+                // 곡 정보
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -185,6 +193,7 @@ fun PostDetailScreen(
                     )
                 }
 
+                // 제목/본문
                 Text(
                     text = post.title,
                     fontSize = 16.sp,
@@ -199,6 +208,31 @@ fun PostDetailScreen(
                     lineHeight = 19.sp
                 )
 
+                // 댓글 헤더 + 토글
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "댓글",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF1D1D1D)
+                    )
+
+                    Text(
+                        text = if (isGridView) "목록 보기" else "그리드 보기",
+                        fontSize = 12.sp,
+                        color = Color(0xFF777777),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color.White)
+                            .padding(horizontal = 10.dp, vertical = 6.dp)
+                            .clickable { isGridView = !isGridView }
+                    )
+                }
+
+                // 댓글 목록
                 if (post.comments.isEmpty()) {
                     Text(
                         text = "아직 댓글이 없어요.",
@@ -207,20 +241,29 @@ fun PostDetailScreen(
                     )
                 } else {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        post.comments.chunked(2).forEach { rowComments ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                rowComments.forEach { comment ->
-                                    CommentCard(
-                                        comment = comment,
-                                        modifier = Modifier.weight(1f)
-                                    )
+                        if (isGridView) {
+                            post.comments.chunked(2).forEach { rowComments ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    rowComments.forEach { comment ->
+                                        CommentCard(
+                                            comment = comment,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
+                                    if (rowComments.size == 1) {
+                                        Spacer(Modifier.weight(1f))
+                                    }
                                 }
-                                if (rowComments.size == 1) {
-                                    Spacer(Modifier.weight(1f))
-                                }
+                            }
+                        } else {
+                            post.comments.forEach { comment ->
+                                CommentCard(
+                                    comment = comment,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
                             }
                         }
                     }
