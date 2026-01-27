@@ -63,6 +63,7 @@ import kotlinx.coroutines.withContext
 fun ShareDefaultScreen(
     onBack: () -> Unit,
     onOpenMusicSearch: () -> Unit,
+    onShareComplete: (Long) -> Unit,
     selectedTrack: MusicTrack?,
     repository: ShareRepository = ShareRepository()
 ) {
@@ -455,6 +456,7 @@ fun ShareDefaultScreen(
                                                         color = Color(0xFF1D1D1D)
                                                     )
                                                     isSettingsVisible = false
+                                                    onShareComplete(it.postId)
                                                 }
                                                 .onFailure {
                                                     shareStatus = ShareStatus(

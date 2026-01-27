@@ -13,4 +13,12 @@ class FeedRepository(
                 ?: throw IllegalStateException(response.error?.message ?: "피드를 불러오지 못했어요.")
         }
     }
+
+    suspend fun fetchPostDetail(postId: Long): Result<PostDetail> {
+        return runCatching {
+            val response = api.fetchPostDetail(postId)
+            response.data
+                ?: throw IllegalStateException(response.error?.message ?: "게시글을 불러오지 못했어요.")
+        }
+    }
 }

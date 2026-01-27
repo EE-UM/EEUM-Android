@@ -9,6 +9,7 @@ fun AppRoot() {
 
     var screen by remember { mutableStateOf(Screen.SPLASH) }
     var selectedTrack by remember { mutableStateOf<MusicTrack?>(null) }
+    var selectedPostId by remember { mutableStateOf<Long?>(null) }
 
     when (screen) {
         Screen.SPLASH ->
@@ -37,6 +38,10 @@ fun AppRoot() {
             ShareDefaultScreen(
                 onBack = { screen = Screen.HOME_DEFAULT },
                 onOpenMusicSearch = { screen = Screen.SHARE_MUSIC },
+                onShareComplete = { postId ->
+                    selectedPostId = postId
+                    screen = Screen.POST_DETAIL
+                },
                 selectedTrack = selectedTrack
             )
 
@@ -48,5 +53,17 @@ fun AppRoot() {
                     screen = Screen.SHARE_DEFAULT
                 }
             )
+
+        Screen.POST_DETAIL -> {
+            val postId = selectedPostId
+            if (postId == null) {
+                screen = Screen.HOME_DEFAULT
+            } else {
+                PostDetailScreen(
+                    postId = postId,
+                    onBack = { screen = Screen.HOME_DEFAULT }
+                )
+            }
+        }
     }
 }

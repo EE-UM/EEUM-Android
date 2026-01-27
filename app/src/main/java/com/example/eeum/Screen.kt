@@ -6,5 +6,6 @@ enum class Screen {
     HOME_SHAKEN,
     FEED_ING,
     SHARE_DEFAULT,
-    SHARE_MUSIC
+    SHARE_MUSIC,
+    POST_DETAIL
 }

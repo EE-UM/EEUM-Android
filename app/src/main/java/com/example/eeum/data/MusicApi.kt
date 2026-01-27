@@ -4,6 +4,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 data class MusicSearchResponse(
@@ -49,4 +50,9 @@ interface MusicApi {
         @Query("pageSize") pageSize: Int,
         @Query("lastPostId") lastPostId: Long?
     ): ApiResponse<List<IngPost>>
+
+    @GET("posts/{postId}")
+    suspend fun fetchPostDetail(
+        @Path("postId") postId: Long
+    ): ApiResponse<PostDetail>
 }
