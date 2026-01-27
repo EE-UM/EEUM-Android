@@ -21,12 +21,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Message
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.eeum.data.FeedRepository
+import com.example.eeum.data.MusicTrack
 import com.example.eeum.data.PostComment
 import com.example.eeum.data.PostDetail
 
@@ -53,6 +59,9 @@ import com.example.eeum.data.PostDetail
 fun PostDetailScreen(
     postId: Long,
     onBack: () -> Unit,
+    onOpenMusicSearch: () -> Unit,
+    selectedTrack: MusicTrack?,
+    onClearSelectedTrack: () -> Unit,
     repository: FeedRepository = FeedRepository()
 ) {
     val bg = Color(0xFFF7F6F2)
@@ -60,6 +69,8 @@ fun PostDetailScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var isGridView by remember { mutableStateOf(true) }
+    var commentInput by remember { mutableStateOf("") }
+    var localComments by remember { mutableStateOf<List<PostComment>>(emptyList()) }
 
     LaunchedEffect(postId) {
         isLoading = true
@@ -67,6 +78,10 @@ fun PostDetailScreen(
             .onSuccess { detail = it }
             .onFailure { errorMessage = it.message ?: "게시글을 불러오지 못했어요." }
         isLoading = false
+    }
+
+    LaunchedEffect(detail?.postId) {
+        localComments = detail?.comments ?: emptyList()
     }
 
     Box(
@@ -235,12 +250,12 @@ fun PostDetailScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        text = "댓글",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF1D1D1D)
-                    )
+                Text(
+                    text = "댓글",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF1D1D1D)
+                )
 
                     Text(
                         text = if (isGridView) "글 보기" else "그리드 보기",
@@ -254,7 +269,7 @@ fun PostDetailScreen(
                     )
                 }
 
-                if (post.comments.isEmpty()) {
+                if (localComments.isEmpty()) {
                     Text(
                         text = "아직 댓글이 없어요.",
                         fontSize = 12.sp,
@@ -263,7 +278,7 @@ fun PostDetailScreen(
                 } else {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         if (isGridView) {
-                            post.comments.chunked(2).forEach { rowComments ->
+                            localComments.chunked(2).forEach { rowComments ->
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -280,12 +295,118 @@ fun PostDetailScreen(
                                 }
                             }
                         } else {
-                            post.comments.forEach { comment ->
+                            localComments.forEach { comment ->
                                 CommentListItem(
                                     comment = comment,
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }
+                        }
+                    }
+                }
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp)
+                ) {
+                    if (selectedTrack != null) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color(0xFFEDEBE5), RoundedCornerShape(14.dp))
+                                .padding(horizontal = 12.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = selectedTrack.title,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFF1D1D1D),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    text = selectedTrack.artist,
+                                    fontSize = 11.sp,
+                                    color = Color(0xFF777777),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                            IconButton(onClick = onClearSelectedTrack) {
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = "선택한 음악 삭제",
+                                    tint = Color(0xFF777777)
+                                )
+                            }
+                        }
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(RoundedCornerShape(18.dp))
+                                .background(Color(0xFF1D1D1D))
+                                .clickable { onOpenMusicSearch() },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Add,
+                                contentDescription = "댓글에 음악 추가",
+                                tint = Color.White,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+
+                        TextField(
+                            value = commentInput,
+                            onValueChange = { commentInput = it },
+                            placeholder = { Text("사연과 관련된 노래를 골라주세요.") },
+                            modifier = Modifier.weight(1f),
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White,
+                                disabledContainerColor = Color.White,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            ),
+                            shape = RoundedCornerShape(18.dp),
+                            singleLine = false
+                        )
+
+                        IconButton(
+                            onClick = {
+                                if (commentInput.isBlank() && selectedTrack == null) return@IconButton
+                                val newComment = PostComment(
+                                    commentId = System.currentTimeMillis(),
+                                    content = commentInput.trim(),
+                                    postId = post.postId,
+                                    userId = 0L,
+                                    username = "나",
+                                    albumName = selectedTrack?.album,
+                                    songName = selectedTrack?.title,
+                                    artistName = selectedTrack?.artist,
+                                    artworkUrl = selectedTrack?.artworkUrl
+                                )
+                                localComments = localComments + newComment
+                                commentInput = ""
+                                onClearSelectedTrack()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowUpward,
+                                contentDescription = "댓글 등록",
+                                tint = Color(0xFF1D1D1D)
+                            )
                         }
                     }
                 }
