@@ -78,7 +78,7 @@ fun ShareDefaultScreen(
     val coroutineScope = rememberCoroutineScope()
     val titleMaxLength = 50
     val storyMaxLength = 200
-    val maxCommentOptions = listOf(10, 20, 30, 40)
+    val maxCommentOptions = listOf(5, 10, 15, 20, 25, 30)
 
     Column(
         modifier = Modifier
