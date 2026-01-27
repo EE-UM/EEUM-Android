@@ -31,7 +31,11 @@ fun AppRoot() {
 
         Screen.FEED_ING ->
             FeedIngScreen(
-                onBack = { screen = Screen.HOME_DEFAULT }
+                onBack = { screen = Screen.HOME_DEFAULT },
+                onOpenDetail = { postId ->
+                    selectedPostId = postId
+                    screen = Screen.POST_DETAIL
+                }
             )
 
         Screen.SHARE_DEFAULT ->

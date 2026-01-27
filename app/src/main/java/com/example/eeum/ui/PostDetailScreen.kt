@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -37,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.eeum.data.FeedRepository
+import com.example.eeum.data.PostComment
 import com.example.eeum.data.PostDetail
 
 @Composable
@@ -65,6 +68,7 @@ fun PostDetailScreen(
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(horizontal = 24.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         Row(
             modifier = Modifier
@@ -170,7 +174,113 @@ fun PostDetailScreen(
                         color = Color(0xFF999999)
                     )
                 }
+
+                Spacer(Modifier.height(20.dp))
+
+                Text(
+                    text = "댓글",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF1D1D1D)
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+                if (post.comments.isEmpty()) {
+                    Text(
+                        text = "아직 댓글이 없어요.",
+                        fontSize = 12.sp,
+                        color = Color(0xFF777777)
+                    )
+                } else {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        post.comments.forEach { comment ->
+                            CommentCard(comment = comment)
+                        }
+                    }
+                }
             }
+        }
+    }
+}
+
+@Composable
+private fun CommentCard(comment: PostComment) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(12.dp))
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        val artworkUrl = comment.artworkUrl
+        if (artworkUrl.isNullOrBlank()) {
+            Box(
+                modifier = Modifier
+                    .size(72.dp)
+                    .background(Color(0xFFE6E2DC), RoundedCornerShape(10.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "앨범",
+                    fontSize = 10.sp,
+                    color = Color(0xFF9A9A9A)
+                )
+            }
+        } else {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(artworkUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = comment.songName ?: "댓글 앨범 이미지",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color(0xFFE6E2DC))
+            )
+        }
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = comment.username ?: "익명",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF1D1D1D)
+                )
+                Text(
+                    text = comment.createdAt.orEmpty(),
+                    fontSize = 10.sp,
+                    color = Color(0xFF999999)
+                )
+            }
+
+            val trackInfo = listOfNotNull(comment.songName, comment.artistName, comment.albumName)
+                .take(2)
+                .joinToString(" • ")
+            if (trackInfo.isNotBlank()) {
+                Text(
+                    text = trackInfo,
+                    fontSize = 11.sp,
+                    color = Color(0xFF777777)
+                )
+            }
+
+            Text(
+                text = comment.content,
+                fontSize = 12.sp,
+                color = Color(0xFF555555),
+                lineHeight = 18.sp
+            )
         }
     }
 }
