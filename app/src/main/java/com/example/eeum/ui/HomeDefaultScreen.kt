@@ -9,10 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.painterResource
 import com.example.eeum.R
 import com.example.eeum.ui.components.BottomNav
 import com.example.eeum.ui.components.CurveDecoration
@@ -41,7 +41,16 @@ fun HomeDefaultScreen(
             fontWeight = FontWeight.Medium,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 16.dp)
+                .padding(top = 12.dp)
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.ic_setting),
+            contentDescription = "settings",
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 12.dp, end = 18.dp)
+                .size(20.dp)
         )
 
         Image(
@@ -67,7 +76,7 @@ fun HomeDefaultScreen(
         Column(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = 24.dp, end = 24.dp, top = 252.dp) // 🔥 여기서 대부분 결정됨
+                .padding(start = 24.dp, end = 24.dp, top = 236.dp) // 🔥 여기서 대부분 결정됨
         ) {
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
@@ -76,17 +85,19 @@ fun HomeDefaultScreen(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = (-1).sp
                 )
-                Spacer(Modifier.width(6.dp))
+
+                Spacer(Modifier.width(4.dp))
+
                 Image(
                     painter = painterResource(id = R.drawable.ic_eeum),
                     contentDescription = "eeum icon",
                     modifier = Modifier
-                        .size(20.dp)
-                        .padding(bottom = 10.dp)
+                        .size(14.dp)
+                        .offset(y = 6.dp)
                 )
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(10.dp))
 
             Text(
                 text = "to receive someone’s letter\nanswer with music",
