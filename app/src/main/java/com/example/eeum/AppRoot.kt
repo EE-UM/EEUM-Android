@@ -9,6 +9,7 @@ fun AppRoot() {
 
     var screen by remember { mutableStateOf(Screen.SPLASH) }
     var selectedTrack by remember { mutableStateOf<MusicTrack?>(null) }
+    var selectedCommentTrack by remember { mutableStateOf<MusicTrack?>(null) }
     var selectedPostId by remember { mutableStateOf<Long?>(null) }
 
     when (screen) {
@@ -68,9 +69,24 @@ fun AppRoot() {
             } else {
                 PostDetailScreen(
                     postId = postId,
-                    onBack = { screen = Screen.HOME_DEFAULT }
+                    onBack = {
+                        selectedCommentTrack = null
+                        screen = Screen.HOME_DEFAULT
+                    },
+                    onOpenMusicSearch = { screen = Screen.POST_COMMENT_MUSIC },
+                    selectedTrack = selectedCommentTrack,
+                    onClearSelectedTrack = { selectedCommentTrack = null }
                 )
             }
         }
+
+        Screen.POST_COMMENT_MUSIC ->
+            ShareMusicSearchScreen(
+                onBack = { screen = Screen.POST_DETAIL },
+                onSelectTrack = { track ->
+                    selectedCommentTrack = track
+                    screen = Screen.POST_DETAIL
+                }
+            )
     }
 }
