@@ -9,10 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.painterResource
 import com.example.eeum.R
 import com.example.eeum.ui.components.BottomNav
 import com.example.eeum.ui.components.CurveDecoration
@@ -53,6 +53,15 @@ fun HomeDefaultScreen(
                 .size(20.dp)
         )
 
+        Image(
+            painter = painterResource(id = R.drawable.ic_setting),
+            contentDescription = "settings",
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 16.dp, end = 20.dp)
+                .size(22.dp)
+        )
+
         // ✅ 곡선: "Top에 붙이지 말고" 내려서, 길게/얇게
         CurveDecoration(
             modifier = Modifier
@@ -69,14 +78,16 @@ fun HomeDefaultScreen(
                 .align(Alignment.TopStart)
                 .padding(start = 24.dp, end = 24.dp, top = 236.dp) // 🔥 여기서 대부분 결정됨
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = "Shake",
                     fontSize = 60.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = (-1).sp
                 )
+
                 Spacer(Modifier.width(4.dp))
+
                 Image(
                     painter = painterResource(id = R.drawable.ic_eeum),
                     contentDescription = "eeum icon",
