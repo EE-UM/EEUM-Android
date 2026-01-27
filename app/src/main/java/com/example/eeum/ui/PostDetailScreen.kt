@@ -121,7 +121,6 @@ fun PostDetailScreen(
                     val post = detail!!
                     val artworkUrl = post.artworkUrl
 
-                    // ✅ codex 레이아웃 유지: 정사각 아트워크 + 곡/아티스트 중앙 정렬
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -244,7 +243,7 @@ fun PostDetailScreen(
                     )
 
                     Text(
-                        text = if (isGridView) "목록 보기" else "그리드 보기",
+                        text = if (isGridView) "글 보기" else "그리드 보기",
                         fontSize = 12.sp,
                         color = Color(0xFF777777),
                         modifier = Modifier
@@ -282,7 +281,7 @@ fun PostDetailScreen(
                             }
                         } else {
                             post.comments.forEach { comment ->
-                                CommentCard(
+                                CommentListItem(
                                     comment = comment,
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -300,7 +299,6 @@ private fun CommentCard(
     comment: PostComment,
     modifier: Modifier = Modifier
 ) {
-    // ✅ codex 스타일로 통일: 세로 카드 + 큰 정사각 이미지 + 아래 곡/아티스트
     Column(
         modifier = modifier
             .background(Color.White, RoundedCornerShape(12.dp))
@@ -354,5 +352,48 @@ private fun CommentCard(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
+    }
+}
+
+@Composable
+private fun CommentListItem(
+    comment: PostComment,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .background(Color.White, RoundedCornerShape(12.dp))
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "♪",
+                fontSize = 12.sp,
+                color = Color(0xFF777777)
+            )
+
+            Text(
+                text = listOfNotNull(comment.songName, comment.artistName).joinToString(" • "),
+                fontSize = 12.sp,
+                color = Color(0xFF1D1D1D),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        if (!comment.content.isNullOrBlank()) {
+            Text(
+                text = comment.content.orEmpty(),
+                fontSize = 12.sp,
+                color = Color(0xFF555555),
+                lineHeight = 18.sp,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
