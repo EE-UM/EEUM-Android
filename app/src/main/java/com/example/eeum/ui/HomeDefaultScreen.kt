@@ -1,5 +1,6 @@
 package com.example.eeum.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource
+import com.example.eeum.R
 import com.example.eeum.ui.components.BottomNav
 import com.example.eeum.ui.components.CurveDecoration
 
@@ -38,7 +41,16 @@ fun HomeDefaultScreen(
             fontWeight = FontWeight.Medium,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 16.dp)
+                .padding(top = 12.dp)
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.ic_setting),
+            contentDescription = "settings",
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 12.dp, end = 18.dp)
+                .size(20.dp)
         )
 
         // ✅ 곡선: "Top에 붙이지 말고" 내려서, 길게/얇게
@@ -55,16 +67,26 @@ fun HomeDefaultScreen(
         Column(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = 24.dp, end = 24.dp, top = 252.dp) // 🔥 여기서 대부분 결정됨
+                .padding(start = 24.dp, end = 24.dp, top = 236.dp) // 🔥 여기서 대부분 결정됨
         ) {
-            Text(
-                text = "Shake",
-                fontSize = 60.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = (-1).sp
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Shake",
+                    fontSize = 60.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = (-1).sp
+                )
+                Spacer(Modifier.width(4.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.ic_eeum),
+                    contentDescription = "eeum icon",
+                    modifier = Modifier
+                        .size(14.dp)
+                        .offset(y = 6.dp)
+                )
+            }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(10.dp))
 
             Text(
                 text = "to receive someone’s letter\nanswer with music",
