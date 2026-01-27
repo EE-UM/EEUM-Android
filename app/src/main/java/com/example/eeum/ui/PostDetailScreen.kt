@@ -105,6 +105,7 @@ fun PostDetailScreen(
                         color = Color(0xFF777777)
                     )
                 }
+
                 errorMessage != null -> {
                     Text(
                         text = errorMessage.orEmpty(),
@@ -112,6 +113,7 @@ fun PostDetailScreen(
                         color = Color(0xFFB00020)
                     )
                 }
+
                 detail != null -> {
                     val post = detail!!
                     val artworkUrl = post.artworkUrl
@@ -155,7 +157,10 @@ fun PostDetailScreen(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .heightIn(max = 520.dp)
-                    .background(Color(0xFFF7F6F2), RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                    .background(
+                        Color(0xFFF7F6F2),
+                        RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+                    )
                     .navigationBarsPadding()
                     .padding(horizontal = 20.dp, vertical = 16.dp)
                     .verticalScroll(rememberScrollState()),
@@ -169,6 +174,7 @@ fun PostDetailScreen(
                         .background(Color(0xFFE0DED7), RoundedCornerShape(2.dp))
                 )
 
+                // 곡 정보
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -187,6 +193,7 @@ fun PostDetailScreen(
                     )
                 }
 
+                // 제목/본문
                 Text(
                     text = post.title,
                     fontSize = 16.sp,
@@ -201,10 +208,10 @@ fun PostDetailScreen(
                     lineHeight = 19.sp
                 )
 
+                // 댓글 헤더 + 토글
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
                         text = "댓글",
@@ -212,6 +219,7 @@ fun PostDetailScreen(
                         fontWeight = FontWeight.SemiBold,
                         color = Color(0xFF1D1D1D)
                     )
+
                     Text(
                         text = if (isGridView) "목록 보기" else "그리드 보기",
                         fontSize = 12.sp,
@@ -224,6 +232,7 @@ fun PostDetailScreen(
                     )
                 }
 
+                // 댓글 목록
                 if (post.comments.isEmpty()) {
                     Text(
                         text = "아직 댓글이 없어요.",
