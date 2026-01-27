@@ -21,4 +21,12 @@ class FeedRepository(
                 ?: throw IllegalStateException(response.error?.message ?: "게시글을 불러오지 못했어요.")
         }
     }
+
+    suspend fun fetchRandomPost(): Result<RandomPost> {
+        return runCatching {
+            val response = api.fetchRandomPost()
+            response.data
+                ?: throw IllegalStateException(response.error?.message ?: "랜덤 게시글을 불러오지 못했어요.")
+        }
+    }
 }
