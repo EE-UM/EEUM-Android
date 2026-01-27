@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -119,6 +120,7 @@ fun PostDetailScreen(
                 detail != null -> {
                     val post = detail!!
                     val artworkUrl = post.artworkUrl
+
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -192,7 +194,6 @@ fun PostDetailScreen(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // drag handle
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
@@ -201,7 +202,6 @@ fun PostDetailScreen(
                         .background(Color(0xFFE0DED7), RoundedCornerShape(2.dp))
                 )
 
-                // 제목
                 Text(
                     text = post.title,
                     fontSize = 16.sp,
@@ -209,7 +209,6 @@ fun PostDetailScreen(
                     color = Color(0xFF1D1D1D)
                 )
 
-                // 본문
                 Text(
                     text = post.content,
                     fontSize = 13.sp,
@@ -217,10 +216,7 @@ fun PostDetailScreen(
                     lineHeight = 19.sp
                 )
 
-                // (codex) 좋아요/댓글 아이콘 Row
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Icon(
                         imageVector = Icons.Filled.FavoriteBorder,
                         contentDescription = "like",
@@ -235,7 +231,6 @@ fun PostDetailScreen(
                     )
                 }
 
-                // 댓글 헤더 + 토글 (main)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -259,7 +254,6 @@ fun PostDetailScreen(
                     )
                 }
 
-                // 댓글 목록
                 if (post.comments.isEmpty()) {
                     Text(
                         text = "아직 댓글이 없어요.",
@@ -308,7 +302,8 @@ private fun CommentCard(
     Column(
         modifier = modifier
             .background(Color.White, RoundedCornerShape(12.dp))
-            .padding(12.dp)
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         val artworkUrl = comment.artworkUrl
         if (artworkUrl.isNullOrBlank()) {
@@ -340,8 +335,6 @@ private fun CommentCard(
                     .background(Color(0xFFE6E2DC))
             )
         }
-
-        Spacer(Modifier.height(8.dp))
 
         Text(
             text = comment.songName ?: "곡 제목",
