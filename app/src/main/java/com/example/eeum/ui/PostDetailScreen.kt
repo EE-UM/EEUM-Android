@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +48,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -544,7 +542,7 @@ private fun CommentListItem(
     modifier: Modifier = Modifier,
     onLongPress: (() -> Unit)? = null
 ) {
-    // ✅ 충돌 해결: combinedClickable로 통일 (long press 지원 + 클릭 확장도 쉬움)
+    // ✅ 충돌 해결: combinedClickable로 통일 (직접 제스처 구현/딜레이 불필요)
     val interactiveModifier = if (onLongPress != null) {
         modifier.combinedClickable(
             onClick = {},
@@ -658,9 +656,7 @@ private fun ReportReasonDialog(
                     .fillMaxSize()
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = onDismiss) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "닫기")
                     }
@@ -677,7 +673,7 @@ private fun ReportReasonDialog(
                 Spacer(Modifier.height(16.dp))
 
                 Text(
-                    text = "이 게시물을 신고하는 이유가 무엇인가요?",
+                    text = "이 댓글을 신고하는 이유가 무엇인가요?",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF1D1D1D)
