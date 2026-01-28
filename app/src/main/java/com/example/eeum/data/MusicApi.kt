@@ -64,4 +64,9 @@ interface MusicApi {
 
     @GET("posts/random")
     suspend fun fetchRandomPost(): ApiResponse<RandomPost>
+
+    @POST("report/comment")
+    suspend fun reportComment(
+        @Body request: ReportCommentRequest
+    ): ApiResponse<ReportCommentResponse>
 }
