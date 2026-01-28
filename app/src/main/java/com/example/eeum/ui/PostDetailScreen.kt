@@ -1,5 +1,6 @@
 package com.example.eeum.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -81,9 +82,11 @@ fun PostDetailScreen(
     var isGridView by remember { mutableStateOf(true) }
     var commentInput by remember { mutableStateOf("") }
     var localComments by remember { mutableStateOf<List<PostComment>>(emptyList()) }
+
     var reportTarget by remember { mutableStateOf<PostComment?>(null) }
     var showReportAction by remember { mutableStateOf(false) }
     var showReportReasons by remember { mutableStateOf(false) }
+
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -304,9 +307,7 @@ fun PostDetailScreen(
                                             modifier = Modifier.weight(1f)
                                         )
                                     }
-                                    if (rowComments.size == 1) {
-                                        Spacer(Modifier.weight(1f))
-                                    }
+                                    if (rowComments.size == 1) Spacer(Modifier.weight(1f))
                                 }
                             }
                         } else {
@@ -405,6 +406,7 @@ fun PostDetailScreen(
                         IconButton(
                             onClick = {
                                 if (commentInput.isBlank() && selectedTrack == null) return@IconButton
+
                                 val newComment = PostComment(
                                     commentId = System.currentTimeMillis(),
                                     content = commentInput.trim(),
@@ -435,6 +437,7 @@ fun PostDetailScreen(
 
     if (showReportAction) {
         ReportActionDialog(
+            comment = reportTarget,
             onDismiss = { showReportAction = false },
             onReportClick = {
                 showReportAction = false
@@ -451,23 +454,36 @@ fun PostDetailScreen(
                 reportTarget = null
             },
             onReasonSelected = { reason ->
-                if (target != null) {
-                    coroutineScope.launch {
-                        repository.reportComment(
-                            commentId = target.commentId,
-                            reportedUserId = target.userId,
-                            reportReason = reason
-                        ).onSuccess {
-                            android.widget.Toast
-                                .makeText(context, "신고가 완료되었어요.", android.widget.Toast.LENGTH_SHORT)
-                                .show()
-                        }.onFailure {
-                            android.widget.Toast
-                                .makeText(context, it.message ?: "신고에 실패했어요.", android.widget.Toast.LENGTH_SHORT)
-                                .show()
+                val trimmedReason = reason.trim()
+
+                if (target != null && trimmedReason.isNotBlank()) {
+                    if (target.userId == 0L) {
+                        android.widget.Toast
+                            .makeText(context, "신고할 수 없는 댓글이에요.", android.widget.Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        coroutineScope.launch {
+                            repository.reportComment(
+                                commentId = target.commentId,
+                                reportedUserId = target.userId,
+                                reportReason = trimmedReason
+                            ).onSuccess {
+                                android.widget.Toast
+                                    .makeText(context, "신고가 완료되었어요.", android.widget.Toast.LENGTH_SHORT)
+                                    .show()
+                            }.onFailure {
+                                android.widget.Toast
+                                    .makeText(
+                                        context,
+                                        it.message ?: "신고에 실패했어요.",
+                                        android.widget.Toast.LENGTH_SHORT
+                                    )
+                                    .show()
+                            }
                         }
                     }
                 }
+
                 showReportReasons = false
                 reportTarget = null
             }
@@ -527,214 +543,4 @@ private fun CommentCard(
         )
 
         Text(
-            text = comment.artistName ?: "아티스트",
-            fontSize = 11.sp,
-            color = Color(0xFF777777),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-}
-
-@Composable
-private fun CommentListItem(
-    comment: PostComment,
-    modifier: Modifier = Modifier,
-    onLongPress: (() -> Unit)? = null
-) {
-    // ✅ 충돌 해결: combinedClickable로 통일 (직접 제스처 구현/딜레이 불필요)
-    val interactiveModifier = if (onLongPress != null) {
-        modifier.combinedClickable(
-            onClick = {},
-            onLongClick = { onLongPress() }
-        )
-    } else {
-        modifier
-    }
-
-    Column(
-        modifier = interactiveModifier
-            .background(Color.White, RoundedCornerShape(12.dp))
-            .padding(horizontal = 14.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = "♪",
-                fontSize = 12.sp,
-                color = Color(0xFF777777)
-            )
-
-            Text(
-                text = listOfNotNull(comment.songName, comment.artistName).joinToString(" • "),
-                fontSize = 12.sp,
-                color = Color(0xFF1D1D1D),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-
-        if (!comment.content.isNullOrBlank()) {
-            Text(
-                text = comment.content.orEmpty(),
-                fontSize = 12.sp,
-                color = Color(0xFF555555),
-                lineHeight = 18.sp,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
-
-@Composable
-private fun ReportActionDialog(
-    onDismiss: () -> Unit,
-    onReportClick: () -> Unit
-) {
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = RoundedCornerShape(18.dp),
-            color = Color.White
-        ) {
-            Column(
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = "댓글을 신고할까요?",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1D1D1D)
-                )
-                TextButton(
-                    onClick = onReportClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(1.dp, Color(0xFFE0DED7), RoundedCornerShape(18.dp))
-                        .background(Color.White, RoundedCornerShape(18.dp))
-                ) {
-                    Text(
-                        text = "신고하기",
-                        fontSize = 14.sp,
-                        color = Color(0xFF1D1D1D)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ReportReasonDialog(
-    onDismiss: () -> Unit,
-    onReasonSelected: (String) -> Unit
-) {
-    val reasons = listOf(
-        "폭력 및 혐오 표현",
-        "성적 불쾌감을 일으키는 표현",
-        "스팸 및 사기",
-        "기타: 입력해주세요"
-    )
-    var showCustomInput by remember { mutableStateOf(false) }
-    var customReason by remember { mutableStateOf("") }
-
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color(0xFFF7F6F2)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = onDismiss) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "닫기")
-                    }
-                    Text(
-                        text = "신고하기",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(Modifier.width(48.dp))
-                }
-
-                Spacer(Modifier.height(16.dp))
-
-                Text(
-                    text = "이 댓글을 신고하는 이유가 무엇인가요?",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1D1D1D)
-                )
-
-                Spacer(Modifier.height(8.dp))
-
-                reasons.forEachIndexed { index, reason ->
-                    Text(
-                        text = reason,
-                        fontSize = 13.sp,
-                        color = Color(0xFF1D1D1D),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                if (index == reasons.lastIndex) {
-                                    showCustomInput = true
-                                } else {
-                                    onReasonSelected(reason)
-                                }
-                            }
-                            .padding(vertical = 12.dp)
-                    )
-                    if (index != reasons.lastIndex) {
-                        Divider(color = Color(0xFFE0DED7))
-                    }
-                }
-
-                if (showCustomInput) {
-                    Spacer(Modifier.height(8.dp))
-                    TextField(
-                        value = customReason,
-                        onValueChange = { customReason = it },
-                        placeholder = { Text("신고 사유를 입력해주세요.") },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
-                            disabledContainerColor = Color.White,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(14.dp)
-                    )
-                    Spacer(Modifier.height(12.dp))
-                    TextButton(
-                        onClick = { onReasonSelected(customReason.trim()) },
-                        enabled = customReason.isNotBlank(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .border(1.dp, Color(0xFFE0DED7), RoundedCornerShape(18.dp))
-                            .background(Color.White, RoundedCornerShape(18.dp))
-                    ) {
-                        Text(
-                            text = "신고하기",
-                            fontSize = 14.sp,
-                            color = Color(0xFF1D1D1D)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
+            text = comment.artistName ?: "아티스트"
