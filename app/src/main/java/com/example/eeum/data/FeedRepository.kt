@@ -14,6 +14,17 @@ class FeedRepository(
         }
     }
 
+    suspend fun fetchDonePosts(
+        pageSize: Int,
+        lastPostId: Long?
+    ): Result<List<IngPost>> {
+        return runCatching {
+            val response = api.fetchDonePosts(pageSize = pageSize, lastPostId = lastPostId)
+            response.data
+                ?: throw IllegalStateException(response.error?.message ?: "완료된 피드를 불러오지 못했어요.")
+        }
+    }
+
     suspend fun fetchPostDetail(postId: Long): Result<PostDetail> {
         return runCatching {
             val response = api.fetchPostDetail(postId)
