@@ -1,11 +1,23 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="360dp"
-    android:height="80dp"
-    android:viewportWidth="360"
-    android:viewportHeight="80">
-  <path
-      android:pathData="M-42,27.75C-10.86,56.2 81.5,89.23 170.5,86.73C263.19,84.13 323.46,49.81 345.21,20C359.67,0.19 340.64,-7.81 332.5,12.69C326.72,27.24 306.68,90.79 377,93.7"
-      android:strokeWidth="1.4"
-      android:fillColor="#00000000"
-      android:strokeColor="#1D1D1D"/>
+    android:width="375dp"
+    android:height="95dp"
+    android:viewportWidth="419"
+    android:viewportHeight="95">
+
+    <group android:translateX="42">
+        <!-- ✅ 왼쪽 끝까지 이어주는 짧은 라인(자연스럽게) -->
+        <path
+            android:pathData="M-42,27.75 L-120,27.75"
+            android:strokeWidth="1.4"
+            android:fillColor="#00000000"
+            android:strokeColor="#1D1D1D"/>
+
+        <!-- 기존 곡선 -->
+        <path
+            android:pathData="M-42,27.75C-10.86,56.2 81.5,89.23 170.5,86.73C263.19,84.13 323.46,49.81 345.21,20C359.67,0.19 340.64,-7.81 332.5,12.69C326.72,27.24 306.68,90.79 377,93.7"
+            android:strokeWidth="1.4"
+            android:fillColor="#00000000"
+            android:strokeColor="#1D1D1D"/>
+    </group>
+
 </vector>
