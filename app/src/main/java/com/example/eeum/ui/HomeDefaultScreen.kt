@@ -86,7 +86,7 @@ fun HomeDefaultScreen(
                     painter = painterResource(id = R.drawable.ic_eeum),
                     contentDescription = "eeum icon",
                     modifier = Modifier
-                        .size(14.dp)
+                        .size(34.dp)
                         .offset(y = 6.dp)
                 )
             }
