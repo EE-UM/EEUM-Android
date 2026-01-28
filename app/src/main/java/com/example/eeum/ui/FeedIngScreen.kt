@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -219,7 +220,7 @@ fun FeedIngScreen(
                             pageSpacing = 16.dp,
                             modifier = Modifier.fillMaxWidth()
                         ) { page ->
-                            // ✅ Conflict resolved: use a version-safe offset formula
+                            // version-safe offset formula
                             val pageOffset =
                                 (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
 
@@ -295,7 +296,7 @@ fun FeedIngScreen(
                         }
 
                         if (isLoadingDone) {
-                            item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(2) }) {
+                            item(span = { GridItemSpan(2) }) {
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
