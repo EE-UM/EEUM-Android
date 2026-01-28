@@ -67,6 +67,7 @@ interface MusicApi {
 
     @POST("report/comment")
     suspend fun reportComment(
+        @Header("Authorization") authorization: String,
         @Body request: ReportCommentRequest
     ): ApiResponse<ReportCommentResponse>
 }
