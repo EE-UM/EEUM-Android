@@ -101,6 +101,7 @@ fun MyCommentsScreen(
 ) {
     val bg = Color(0xFFF7F6F2)
     val coroutineScope = rememberCoroutineScope()
+
     var comments by remember { mutableStateOf<List<CommentedPost>>(emptyList()) }
     var commentCount by remember { mutableStateOf(0) }
     var isLoading by remember { mutableStateOf(false) }
@@ -111,6 +112,7 @@ fun MyCommentsScreen(
         coroutineScope.launch {
             isLoading = true
             errorMessage = null
+
             val result = repository.fetchCommentedPosts()
             result.onSuccess { data ->
                 comments = data.getCommentedPostsResponses
@@ -118,6 +120,7 @@ fun MyCommentsScreen(
             }.onFailure { error ->
                 errorMessage = error.message ?: "댓글 단 게시글을 불러오지 못했어요."
             }
+
             isLoading = false
         }
     }
@@ -212,6 +215,7 @@ fun MyLikesScreen(
 ) {
     val bg = Color(0xFFF7F6F2)
     val coroutineScope = rememberCoroutineScope()
+
     var likes by remember { mutableStateOf<List<LikedPost>>(emptyList()) }
     var likesCount by remember { mutableStateOf(0) }
     var isLoading by remember { mutableStateOf(false) }
@@ -222,6 +226,7 @@ fun MyLikesScreen(
         coroutineScope.launch {
             isLoading = true
             errorMessage = null
+
             val result = repository.fetchLikedPosts()
             result.onSuccess { data ->
                 likes = data.getLikedPostsResponses
@@ -229,6 +234,7 @@ fun MyLikesScreen(
             }.onFailure { error ->
                 errorMessage = error.message ?: "좋아요 게시글을 불러오지 못했어요."
             }
+
             isLoading = false
         }
     }
@@ -342,6 +348,7 @@ private fun CommentedPostRow(comment: CommentedPost) {
                 )
             }
         }
+
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -370,6 +377,7 @@ private fun CommentedPostRow(comment: CommentedPost) {
 @Composable
 private fun LikedPostCard(likedPost: LikedPost) {
     val title = likedPost.title ?: "사연 제목"
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
@@ -390,6 +398,7 @@ private fun LikedPostCard(likedPost: LikedPost) {
                     modifier = Modifier.fillMaxSize()
                 )
             }
+
             Icon(
                 imageVector = Icons.Filled.Favorite,
                 contentDescription = null,
