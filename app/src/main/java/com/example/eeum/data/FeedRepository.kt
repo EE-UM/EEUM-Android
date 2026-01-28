@@ -3,6 +3,8 @@ package com.example.eeum.data
 class FeedRepository(
     private val api: MusicApi = MusicApiProvider.api
 ) {
+    private var cachedAuthHeader: String? = null
+
     suspend fun fetchIngPosts(
         pageSize: Int,
         lastPostId: Long?
@@ -47,7 +49,23 @@ class FeedRepository(
         reportReason: String
     ): Result<ReportCommentResponse> {
         return runCatching {
+            val authHeader = cachedAuthHeader ?: run {
+                val loginResponse = api.loginForTest(
+                    TestLoginRequest(
+                        idToken = "test",
+                        provider = "test"
+                    )
+                )
+                val loginData = loginResponse.data
+                    ?: throw IllegalStateException(loginResponse.error?.message ?: "로그인 실패")
+                val tokenType = loginData.tokenType.ifBlank { "Bearer" }
+                val header = "${tokenType.trim()} ${loginData.accessToken}".trim()
+                cachedAuthHeader = header
+                header
+            }
+
             val response = api.reportComment(
+                authHeader,
                 ReportCommentRequest(
                     commentId = commentId,
                     reportedUserId = reportedUserId,
