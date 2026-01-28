@@ -51,6 +51,12 @@ interface MusicApi {
         @Query("lastPostId") lastPostId: Long?
     ): ApiResponse<List<IngPost>>
 
+    @GET("posts/done/infinite-scroll")
+    suspend fun fetchDonePosts(
+        @Query("pageSize") pageSize: Int,
+        @Query("lastPostId") lastPostId: Long?
+    ): ApiResponse<List<IngPost>>
+
     @GET("posts/{postId}")
     suspend fun fetchPostDetail(
         @Path("postId") postId: Long
