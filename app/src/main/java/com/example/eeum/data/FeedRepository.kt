@@ -40,4 +40,22 @@ class FeedRepository(
                 ?: throw IllegalStateException(response.error?.message ?: "랜덤 게시글을 불러오지 못했어요.")
         }
     }
+
+    suspend fun reportComment(
+        commentId: Long,
+        reportedUserId: Long,
+        reportReason: String
+    ): Result<ReportCommentResponse> {
+        return runCatching {
+            val response = api.reportComment(
+                ReportCommentRequest(
+                    commentId = commentId,
+                    reportedUserId = reportedUserId,
+                    reportReason = reportReason
+                )
+            )
+            response.data
+                ?: throw IllegalStateException(response.error?.message ?: "신고를 완료하지 못했어요.")
+        }
+    }
 }
