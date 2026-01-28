@@ -15,12 +15,7 @@ object AuthHeaderStore {
 
     suspend fun getOrFetchAuthHeader(api: MusicApi): String {
         return cachedAuthHeader ?: run {
-            val loginResponse = api.loginForTest(
-                TestLoginRequest(
-                    idToken = "test",
-                    provider = "test"
-                )
-            )
+            val loginResponse = api.loginForDevMaster()
             val loginData = loginResponse.data
                 ?: throw IllegalStateException(loginResponse.error?.message ?: "로그인 실패")
             val header = "${loginData.tokenType.ifBlank { "Bearer" }.trim()} ${loginData.accessToken}".trim()

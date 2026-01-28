@@ -6,6 +6,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 data class MusicSearchResponse(
     val result: String,
@@ -34,9 +35,9 @@ interface MusicApi {
         @Query("limit") limit: Int
     ): MusicSearchResponse
 
-    @POST("user/test")
-    suspend fun loginForTest(
-        @Body request: TestLoginRequest
+    @POST
+    suspend fun loginForDevMaster(
+        @Url url: String = "https://eeum.xyz/dev/auth/dev-master"
     ): ApiResponse<TestLoginResponse>
 
     @POST("posts")
