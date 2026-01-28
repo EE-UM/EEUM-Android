@@ -9,10 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.painterResource
 import com.example.eeum.R
 import com.example.eeum.ui.components.BottomNav
 import com.example.eeum.ui.components.CurveDecoration
@@ -45,6 +45,7 @@ fun HomeDefaultScreen(
                 .padding(top = 12.dp)
         )
 
+        // ✅ 설정 아이콘(1개만) + 클릭 연결
         Image(
             painter = painterResource(id = R.drawable.ic_setting),
             contentDescription = "settings",
@@ -69,22 +70,24 @@ fun HomeDefaultScreen(
         Column(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = 24.dp, end = 24.dp, top = 236.dp) // 🔥 여기서 대부분 결정됨
+                .padding(start = 24.dp, end = 24.dp, top = 236.dp)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = "Shake",
                     fontSize = 60.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = (-1).sp
                 )
-                Spacer(Modifier.width(6.dp))
+
+                Spacer(Modifier.width(4.dp))
+
                 Image(
                     painter = painterResource(id = R.drawable.ic_eeum),
                     contentDescription = "eeum icon",
                     modifier = Modifier
-                        .size(18.dp)
-                        .offset(y = 4.dp)
+                        .size(14.dp)
+                        .offset(y = 6.dp)
                 )
             }
 
@@ -98,7 +101,7 @@ fun HomeDefaultScreen(
             )
         }
 
-        // ✅ 하단 네비: 아이콘+텍스트 세트로 중앙 정렬 느낌
+        // ✅ 하단 네비
         BottomNav(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
