@@ -5,6 +5,23 @@ class FeedRepository(
 ) {
     private var cachedAuthHeader: String? = null
 
+    private suspend fun getAuthHeader(): String {
+        return cachedAuthHeader ?: run {
+            val loginResponse = api.loginForTest(
+                TestLoginRequest(
+                    idToken = "test",
+                    provider = "test"
+                )
+            )
+            val loginData = loginResponse.data
+                ?: throw IllegalStateException(loginResponse.error?.message ?: "로그인 실패")
+            val tokenType = loginData.tokenType.ifBlank { "Bearer" }
+            val header = "${tokenType.trim()} ${loginData.accessToken}".trim()
+            cachedAuthHeader = header
+            header
+        }
+    }
+
     suspend fun fetchIngPosts(
         pageSize: Int,
         lastPostId: Long?
@@ -43,27 +60,22 @@ class FeedRepository(
         }
     }
 
+    suspend fun fetchMyPosts(): Result<MyPostsData> {
+        return runCatching {
+            val authHeader = getAuthHeader()
+            val response = api.fetchMyPosts(authHeader)
+            response.data
+                ?: throw IllegalStateException(response.error?.message ?: "내 게시글을 불러오지 못했어요.")
+        }
+    }
+
     suspend fun reportComment(
         commentId: Long,
         reportedUserId: Long,
         reportReason: String
     ): Result<ReportCommentResponse> {
         return runCatching {
-            val authHeader = cachedAuthHeader ?: run {
-                val loginResponse = api.loginForTest(
-                    TestLoginRequest(
-                        idToken = "test",
-                        provider = "test"
-                    )
-                )
-                val loginData = loginResponse.data
-                    ?: throw IllegalStateException(loginResponse.error?.message ?: "로그인 실패")
-                val tokenType = loginData.tokenType.ifBlank { "Bearer" }
-                val header = "${tokenType.trim()} ${loginData.accessToken}".trim()
-                cachedAuthHeader = header
-                header
-            }
-
+            val authHeader = getAuthHeader()
             val response = api.reportComment(
                 authHeader,
                 ReportCommentRequest(

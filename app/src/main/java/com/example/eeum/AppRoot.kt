@@ -56,6 +56,7 @@ fun AppRoot() {
         Screen.FEED_ING ->
             FeedIngScreen(
                 onBack = { popBack() },
+                onOpenInbox = { navigateTo(Screen.MY_POSTS, true) },
                 onOpenDetail = { postId ->
                     selectedPostId = postId
                     navigateTo(Screen.POST_DETAIL, true)
@@ -110,6 +111,15 @@ fun AppRoot() {
                 onSelectTrack = { track ->
                     selectedCommentTrack = track
                     popBack()
+                }
+            )
+
+        Screen.MY_POSTS ->
+            MyPostsScreen(
+                onBack = { popBack() },
+                onOpenDetail = { postId ->
+                    selectedPostId = postId
+                    navigateTo(Screen.POST_DETAIL, true)
                 }
             )
     }
