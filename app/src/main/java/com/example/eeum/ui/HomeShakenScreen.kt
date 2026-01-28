@@ -77,7 +77,7 @@ fun HomeShakenScreen(
                     .offset(x = (-64).dp)
             )
 
-            Spacer(Modifier.height(28.dp))
+            Spacer(Modifier.height(44.dp))
 
             when {
                 isLoading -> {
