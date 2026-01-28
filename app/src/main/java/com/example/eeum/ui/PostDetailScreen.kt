@@ -3,9 +3,7 @@ package com.example.eeum.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +29,7 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Message
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -38,7 +37,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,7 +55,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
@@ -67,7 +64,6 @@ import com.example.eeum.data.MusicTrack
 import com.example.eeum.data.PostComment
 import com.example.eeum.data.PostDetail
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
 
 @Composable
 fun PostDetailScreen(
@@ -269,12 +265,12 @@ fun PostDetailScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                Text(
-                    text = "댓글",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1D1D1D)
-                )
+                    Text(
+                        text = "댓글",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF1D1D1D)
+                    )
 
                     Text(
                         text = if (isGridView) "글 보기" else "그리드 보기",
@@ -546,18 +542,12 @@ private fun CommentListItem(
     modifier: Modifier = Modifier,
     onLongPress: (() -> Unit)? = null
 ) {
+    // ✅ 충돌 해결: combinedClickable로 통일 (직접 제스처 구현/딜레이 불필요)
     val interactiveModifier = if (onLongPress != null) {
-        modifier.pointerInput(Unit) {
-            awaitEachGesture {
-                awaitFirstDown()
-                val longPressJob = launch {
-                    delay(1000L)
-                    onLongPress()
-                }
-                waitForUpOrCancellation()
-                longPressJob.cancel()
-            }
-        }
+        modifier.combinedClickable(
+            onClick = {},
+            onLongClick = { onLongPress() }
+        )
     } else {
         modifier
     }
@@ -666,9 +656,7 @@ private fun ReportReasonDialog(
                     .fillMaxSize()
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = onDismiss) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "닫기")
                     }
