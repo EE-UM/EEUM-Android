@@ -38,18 +38,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.eeum.R
 import com.example.eeum.data.FeedRepository
 import com.example.eeum.data.MyPost
 import kotlinx.coroutines.launch
 
 @Composable
 fun MyPostsScreen(
-    onBack: () -> Unit,
+    onHome: () -> Unit,
+    onOpenMenu: () -> Unit,
     onOpenDetail: (Long) -> Unit,
     repository: FeedRepository = FeedRepository()
 ) {
@@ -94,10 +97,15 @@ fun MyPostsScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onBack) {
+            IconButton(onClick = onHome) {
                 Icon(Icons.Filled.Home, contentDescription = "home")
             }
-            Spacer(Modifier.size(32.dp))
+            IconButton(onClick = onOpenMenu) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_multi),
+                    contentDescription = "menu"
+                )
+            }
         }
 
         Spacer(Modifier.height(12.dp))

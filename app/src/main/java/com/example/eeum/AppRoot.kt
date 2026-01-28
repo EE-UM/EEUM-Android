@@ -27,6 +27,11 @@ fun AppRoot() {
         }
     }
 
+    val navigateHome: () -> Unit = {
+        backStack.clear()
+        screen = Screen.HOME_DEFAULT
+    }
+
     BackHandler(enabled = backStack.isNotEmpty()) {
         popBack()
     }
@@ -116,11 +121,32 @@ fun AppRoot() {
 
         Screen.MY_POSTS ->
             MyPostsScreen(
-                onBack = { popBack() },
+                onHome = { navigateHome() },
+                onOpenMenu = { navigateTo(Screen.MY_POSTS_MENU, true) },
                 onOpenDetail = { postId ->
                     selectedPostId = postId
                     navigateTo(Screen.POST_DETAIL, true)
                 }
+            )
+
+        Screen.MY_POSTS_MENU ->
+            MyPostsMenuScreen(
+                onClose = { popBack() },
+                onOpenPosts = { navigateTo(Screen.MY_POSTS, true) },
+                onOpenComments = { navigateTo(Screen.MY_POSTS_COMMENTS, true) },
+                onOpenLikes = { navigateTo(Screen.MY_POSTS_LIKES, true) }
+            )
+
+        Screen.MY_POSTS_COMMENTS ->
+            MyCommentsScreen(
+                onHome = { navigateHome() },
+                onOpenMenu = { navigateTo(Screen.MY_POSTS_MENU, true) }
+            )
+
+        Screen.MY_POSTS_LIKES ->
+            MyLikesScreen(
+                onHome = { navigateHome() },
+                onOpenMenu = { navigateTo(Screen.MY_POSTS_MENU, true) }
             )
     }
 }
