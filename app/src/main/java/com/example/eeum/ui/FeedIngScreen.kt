@@ -181,9 +181,8 @@ fun FeedIngScreen(
                     val alpha = lerp(start = 0.65f, stop = 1f, fraction = 1f - absOffset)
                     val rotation = 6f * clampedOffset
 
-                    FeedIngCard(
+                    FeedIngImageCard(
                         post = posts[page],
-                        onOpenDetail = onOpenDetail,
                         modifier = Modifier.graphicsLayer {
                             scaleX = scale
                             scaleY = scale
@@ -193,6 +192,13 @@ fun FeedIngScreen(
                         }
                     )
                 }
+
+                Spacer(Modifier.height(16.dp))
+
+                FeedIngDetailPanel(
+                    post = posts[pagerState.currentPage],
+                    onOpenDetail = onOpenDetail
+                )
             }
 
             isLoading -> {
@@ -244,53 +250,60 @@ fun FeedIngScreen(
 }
 
 @Composable
-private fun FeedIngCard(
+private fun FeedIngImageCard(
     post: IngPost,
-    onOpenDetail: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         shape = RoundedCornerShape(18.dp),
         modifier = modifier.fillMaxWidth()
     ) {
+        val artworkUrl = post.artworkUrl
+        if (artworkUrl.isNullOrBlank()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
+                    .background(Color(0xFFE6E2DC)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "앨범 이미지",
+                    fontSize = 12.sp,
+                    color = Color(0xFF9A9A9A)
+                )
+            }
+        } else {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(artworkUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = post.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
+                    .background(Color(0xFFE6E2DC))
+            )
+        }
+    }
+}
+
+@Composable
+private fun FeedIngDetailPanel(
+    post: IngPost,
+    onOpenDetail: (Long) -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(18.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Column(
             modifier = Modifier
                 .background(Color.White)
-                .padding(16.dp)
+                .padding(horizontal = 18.dp, vertical = 16.dp)
         ) {
-            val artworkUrl = post.artworkUrl
-            if (artworkUrl.isNullOrBlank()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(220.dp)
-                        .background(Color(0xFFE6E2DC), RoundedCornerShape(12.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "앨범 이미지",
-                        fontSize = 12.sp,
-                        color = Color(0xFF9A9A9A)
-                    )
-                }
-            } else {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(artworkUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = post.title,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(220.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFFE6E2DC))
-                )
-            }
-
-            Spacer(Modifier.height(12.dp))
-
             Text(
                 text = post.title,
                 fontSize = 16.sp,
@@ -307,7 +320,7 @@ private fun FeedIngCard(
                 color = Color(0xFF555555)
             )
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(16.dp))
 
             Button(
                 onClick = { onOpenDetail(post.postId) },
