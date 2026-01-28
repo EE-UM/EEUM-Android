@@ -11,7 +11,7 @@ import com.example.eeum.R
 
 @Composable
 fun CurveDecoration(
-    showRight: Boolean = false,
+    showRight: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -19,14 +19,6 @@ fun CurveDecoration(
             .fillMaxWidth()
             .height(80.dp)
     ) {
-        Image(
-            painter = painterResource(R.drawable.curve_left),
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .height(80.dp)
-        )
-
         if (showRight) {
             Image(
                 painter = painterResource(R.drawable.curve_right),
