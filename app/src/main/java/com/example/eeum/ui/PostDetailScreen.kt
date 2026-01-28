@@ -1,8 +1,10 @@
 package com.example.eeum.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +30,7 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Message
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -35,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,11 +56,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.input.pointer.changedToCanceled
-import androidx.compose.ui.input.pointer.changedToDown
-import androidx.compose.ui.input.pointer.changedToUp
-import androidx.compose.ui.input.pointer.forEachGesture
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
@@ -68,7 +65,6 @@ import com.example.eeum.data.MusicTrack
 import com.example.eeum.data.PostComment
 import com.example.eeum.data.PostDetail
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
 
 @Composable
 fun PostDetailScreen(
@@ -86,9 +82,11 @@ fun PostDetailScreen(
     var isGridView by remember { mutableStateOf(true) }
     var commentInput by remember { mutableStateOf("") }
     var localComments by remember { mutableStateOf<List<PostComment>>(emptyList()) }
+
     var reportTarget by remember { mutableStateOf<PostComment?>(null) }
     var showReportAction by remember { mutableStateOf(false) }
     var showReportReasons by remember { mutableStateOf(false) }
+
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -270,12 +268,12 @@ fun PostDetailScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                Text(
-                    text = "댓글",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1D1D1D)
-                )
+                    Text(
+                        text = "댓글",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF1D1D1D)
+                    )
 
                     Text(
                         text = if (isGridView) "글 보기" else "그리드 보기",
@@ -410,6 +408,7 @@ fun PostDetailScreen(
                         IconButton(
                             onClick = {
                                 if (commentInput.isBlank() && selectedTrack == null) return@IconButton
+
                                 val newComment = PostComment(
                                     commentId = System.currentTimeMillis(),
                                     content = commentInput.trim(),
@@ -463,6 +462,7 @@ fun PostDetailScreen(
                     reportTarget = null
                     return@ReportReasonDialog
                 }
+
                 if (target.userId == 0L) {
                     android.widget.Toast
                         .makeText(context, "신고할 수 없는 댓글이에요.", android.widget.Toast.LENGTH_SHORT)
@@ -471,6 +471,7 @@ fun PostDetailScreen(
                     reportTarget = null
                     return@ReportReasonDialog
                 }
+
                 coroutineScope.launch {
                     repository.reportComment(
                         commentId = target.commentId,
@@ -486,6 +487,7 @@ fun PostDetailScreen(
                             .show()
                     }
                 }
+
                 showReportReasons = false
                 reportTarget = null
             }
@@ -554,6 +556,7 @@ private fun CommentCard(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun CommentListItem(
     comment: PostComment,
@@ -561,29 +564,10 @@ private fun CommentListItem(
     onLongPress: (() -> Unit)? = null
 ) {
     val interactiveModifier = if (onLongPress != null) {
-        modifier.pointerInput(Unit) {
-            forEachGesture {
-                awaitPointerEventScope {
-                    val down = awaitPointerEvent()
-                        .changes
-                        .firstOrNull { it.changedToDown() }
-                        ?: return@awaitPointerEventScope
-                    val pointerId = down.id
-                    val longPressJob = launch {
-                        delay(1000L)
-                        onLongPress()
-                    }
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        val change = event.changes.firstOrNull { it.id == pointerId } ?: continue
-                        if (change.changedToUp() || change.changedToCanceled()) {
-                            longPressJob.cancel()
-                            break
-                        }
-                    }
-                }
-            }
-        }
+        modifier.combinedClickable(
+            onClick = {},
+            onLongClick = { onLongPress() }
+        )
     } else {
         modifier
     }
@@ -663,7 +647,8 @@ private fun ReportActionDialog(
                             color = Color(0xFF777777)
                         )
                         Text(
-                            text = listOfNotNull(comment?.songName, comment?.artistName).joinToString(" • ")
+                            text = listOfNotNull(comment?.songName, comment?.artistName)
+                                .joinToString(" • ")
                                 .ifBlank { "댓글" },
                             fontSize = 12.sp,
                             color = Color(0xFF1D1D1D),
@@ -729,9 +714,7 @@ private fun ReportReasonDialog(
                     .fillMaxSize()
                     .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = onDismiss) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "닫기")
                     }
