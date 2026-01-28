@@ -21,7 +21,8 @@ import com.example.eeum.ui.components.CurveDecoration
 fun HomeDefaultScreen(
     onShake: () -> Unit,
     onFeed: () -> Unit,
-    onShare: () -> Unit
+    onShare: () -> Unit,
+    onSettings: () -> Unit
 ) {
     val bg = Color(0xFFF7F6F2) // 원본 느낌의 아이보리
 
@@ -44,22 +45,15 @@ fun HomeDefaultScreen(
                 .padding(top = 12.dp)
         )
 
+        // ✅ 설정 아이콘(1개만) + 클릭 연결
         Image(
             painter = painterResource(id = R.drawable.ic_setting),
             contentDescription = "settings",
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 12.dp, end = 18.dp)
+                .padding(top = 14.dp, end = 20.dp)
                 .size(20.dp)
-        )
-
-        Image(
-            painter = painterResource(id = R.drawable.ic_setting),
-            contentDescription = "settings",
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 16.dp, end = 20.dp)
-                .size(22.dp)
+                .clickable { onSettings() }
         )
 
         // ✅ 곡선: "Top에 붙이지 말고" 내려서, 길게/얇게
@@ -76,7 +70,7 @@ fun HomeDefaultScreen(
         Column(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = 24.dp, end = 24.dp, top = 236.dp) // 🔥 여기서 대부분 결정됨
+                .padding(start = 24.dp, end = 24.dp, top = 236.dp)
         ) {
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
@@ -107,7 +101,7 @@ fun HomeDefaultScreen(
             )
         }
 
-        // ✅ 하단 네비: 아이콘+텍스트 세트로 중앙 정렬 느낌
+        // ✅ 하단 네비
         BottomNav(
             modifier = Modifier
                 .align(Alignment.BottomCenter)

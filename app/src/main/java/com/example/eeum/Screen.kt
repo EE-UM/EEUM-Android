@@ -8,5 +8,6 @@ enum class Screen {
     SHARE_DEFAULT,
     SHARE_MUSIC,
     POST_DETAIL,
-    POST_COMMENT_MUSIC
+    POST_COMMENT_MUSIC,
+    SETTINGS
 }
