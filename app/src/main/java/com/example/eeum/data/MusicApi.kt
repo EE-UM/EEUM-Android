@@ -65,6 +65,11 @@ interface MusicApi {
     @GET("posts/random")
     suspend fun fetchRandomPost(): ApiResponse<RandomPost>
 
+    @GET("posts/my")
+    suspend fun fetchMyPosts(
+        @Header("Authorization") authorization: String
+    ): ApiResponse<MyPostsData>
+
     @POST("report/comment")
     suspend fun reportComment(
         @Header("Authorization") authorization: String,

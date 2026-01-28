@@ -64,6 +64,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun FeedIngScreen(
     onBack: () -> Unit,
+    onOpenInbox: () -> Unit,
     onOpenDetail: (Long) -> Unit,
     repository: FeedRepository = FeedRepository()
 ) {
@@ -173,6 +174,7 @@ fun FeedIngScreen(
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
                     .background(Color(0xFFECEBE7))
+                    .clickable(onClick = onOpenInbox)
                     .padding(horizontal = 12.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {

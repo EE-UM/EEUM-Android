@@ -9,5 +9,6 @@ enum class Screen {
     SHARE_MUSIC,
     POST_DETAIL,
     POST_COMMENT_MUSIC,
-    SETTINGS
+    SETTINGS,
+    MY_POSTS
 }
