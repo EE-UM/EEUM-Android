@@ -12,11 +12,6 @@ data class ApiResponse<T>(
     val error: ApiError? = null
 )
 
-data class TestLoginRequest(
-    val idToken: String,
-    val provider: String
-)
-
 data class TestLoginResponse(
     val accessToken: String,
     val tokenType: String,
