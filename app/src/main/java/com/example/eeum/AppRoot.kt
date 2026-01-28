@@ -20,7 +20,8 @@ fun AppRoot() {
             HomeDefaultScreen(
                 onShake = { screen = Screen.HOME_SHAKEN },
                 onFeed = { screen = Screen.FEED_ING },
-                onShare = { screen = Screen.SHARE_DEFAULT }
+                onShare = { screen = Screen.SHARE_DEFAULT },
+                onSettings = { screen = Screen.SETTINGS }
             )
 
         Screen.HOME_SHAKEN ->
@@ -60,6 +61,10 @@ fun AppRoot() {
                     selectedTrack = track
                     screen = Screen.SHARE_DEFAULT
                 }
+            )
+        Screen.SETTINGS ->
+            SettingsScreen(
+                onBack = { screen = Screen.HOME_DEFAULT }
             )
 
         Screen.POST_DETAIL -> {
