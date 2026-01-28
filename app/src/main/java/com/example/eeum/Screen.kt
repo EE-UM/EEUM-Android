@@ -10,5 +10,8 @@ enum class Screen {
     POST_DETAIL,
     POST_COMMENT_MUSIC,
     SETTINGS,
-    MY_POSTS
+    MY_POSTS,
+    MY_POSTS_MENU,
+    MY_POSTS_COMMENTS,
+    MY_POSTS_LIKES
 }

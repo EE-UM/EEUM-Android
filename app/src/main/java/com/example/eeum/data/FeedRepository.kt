@@ -54,6 +54,24 @@ class FeedRepository(
         }
     }
 
+    suspend fun fetchCommentedPosts(): Result<CommentedPostsData> {
+        return runCatching {
+            val authHeader = getAuthHeader()
+            val response = api.fetchCommentedPosts(authHeader)
+            response.data
+                ?: throw IllegalStateException(response.error?.message ?: "댓글 단 게시글을 불러오지 못했어요.")
+        }
+    }
+
+    suspend fun fetchLikedPosts(): Result<LikedPostsData> {
+        return runCatching {
+            val authHeader = getAuthHeader()
+            val response = api.fetchLikedPosts(authHeader)
+            response.data
+                ?: throw IllegalStateException(response.error?.message ?: "좋아요 게시글을 불러오지 못했어요.")
+        }
+    }
+
     suspend fun reportComment(
         commentId: Long,
         reportedUserId: Long,

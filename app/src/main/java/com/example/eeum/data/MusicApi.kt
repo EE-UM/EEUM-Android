@@ -71,6 +71,16 @@ interface MusicApi {
         @Header("Authorization") authorization: String
     ): ApiResponse<MyPostsData>
 
+    @GET("posts/commented")
+    suspend fun fetchCommentedPosts(
+        @Header("Authorization") authorization: String
+    ): ApiResponse<CommentedPostsData>
+
+    @GET("posts/liked")
+    suspend fun fetchLikedPosts(
+        @Header("Authorization") authorization: String
+    ): ApiResponse<LikedPostsData>
+
     @POST("report/comment")
     suspend fun reportComment(
         @Header("Authorization") authorization: String,
