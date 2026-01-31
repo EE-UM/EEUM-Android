@@ -32,52 +32,39 @@ fun HomeDefaultScreen(
             .background(bg)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .clickable { onShake() } // 임시로 클릭 시 다음 화면으로 넘어가게 설정
+            .clickable { onShake() }
     ) {
 
-        // ✅ 상단 타이틀 (원본처럼 살짝 내려서)
-        Text(
-            text = "eeum",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 12.dp)
-        )
-
-        // ✅ 설정 아이콘(1개만) + 클릭 연결
         Image(
             painter = painterResource(id = R.drawable.ic_setting),
             contentDescription = "settings",
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 14.dp, end = 20.dp)
-                .size(20.dp)
+                .padding(top = 16.dp, end = 18.dp)
+                .size(18.dp)
                 .clickable { onSettings() }
         )
 
-        // ✅ 곡선: "Top에 붙이지 말고" 내려서, 길게/얇게
         CurveDecoration(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(72.dp)          // 🔥 얇게
-                .align(Alignment.TopStart)
-                .padding(top = 76.dp)   // 🔥 원본처럼 타이틀 아래에 위치
-                .offset(x = (-64).dp)   // 🔥 왼쪽이 화면 밖에서 시작하는 느낌
+                .width(220.dp)
+                .height(60.dp)
+                .align(Alignment.TopEnd)
+                .padding(top = 42.dp, end = 6.dp)
         )
 
-        // ✅ Shake 텍스트 블록: 원본 위치로 내려서 고정
         Column(
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(start = 24.dp, end = 24.dp, top = 236.dp)
+                .align(Alignment.CenterStart)
+                .padding(start = 22.dp, end = 22.dp)
+                .offset(y = (-22).dp)
         ) {
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = "Shake",
-                    fontSize = 60.sp,
+                    fontSize = 56.sp,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = (-1).sp
+                    letterSpacing = (-1.2).sp
                 )
 
                 Spacer(Modifier.width(4.dp))
@@ -86,28 +73,27 @@ fun HomeDefaultScreen(
                     painter = painterResource(id = R.drawable.ic_eeum),
                     contentDescription = "eeum icon",
                     modifier = Modifier
-                        .size(34.dp)
-                        .offset(y = 6.dp)
+                        .size(30.dp)
+                        .offset(y = 5.dp)
                 )
             }
 
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(8.dp))
 
             Text(
                 text = "to receive someone’s letter\nanswer with music",
-                fontSize = 14.sp,
-                lineHeight = 21.sp,
-                color = Color(0xFF9A9A9A)
+                fontSize = 13.sp,
+                lineHeight = 18.sp,
+                color = Color(0xFF8E8E8E)
             )
         }
 
-        // ✅ 하단 네비
         BottomNav(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 18.dp)
+                .padding(bottom = 22.dp)
                 .fillMaxWidth()
-                .padding(horizontal = 64.dp),
+                .padding(horizontal = 56.dp),
             onFeed = onFeed,
             onShare = onShare
         )

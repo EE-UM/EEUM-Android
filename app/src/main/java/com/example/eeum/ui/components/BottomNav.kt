@@ -52,10 +52,10 @@ private fun NavItem(
             }
         )
     ) {
-        Box(Modifier.size(24.dp), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(22.dp), contentAlignment = Alignment.Center) {
             icon()
         }
-        Spacer(Modifier.height(6.dp))
-        Text(label, fontSize = 10.sp)
+        Spacer(Modifier.height(4.dp))
+        Text(label, fontSize = 9.sp)
     }
 }
