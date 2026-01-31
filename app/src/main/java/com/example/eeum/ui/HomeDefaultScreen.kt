@@ -26,7 +26,7 @@ fun HomeDefaultScreen(
 ) {
     val bg = Color(0xFFF7F6F2) // 원본 느낌의 아이보리
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(bg)
@@ -34,30 +34,41 @@ fun HomeDefaultScreen(
             .navigationBarsPadding()
             .clickable { onShake() }
     ) {
+        val settingsTop = maxHeight * 0.038f
+        val settingsEnd = maxWidth * 0.07f
+
+        val curveTop = maxHeight * 0.065f
+        val curveEnd = maxWidth * 0.02f
+        val curveWidth = maxWidth * 0.62f
+        val curveHeight = maxHeight * 0.078f
+
+        val headlineTop = maxHeight * 0.36f
+        val headlineStart = maxWidth * 0.09f
+
+        val bottomNavPadding = maxHeight * 0.05f
 
         Image(
             painter = painterResource(id = R.drawable.ic_setting),
             contentDescription = "settings",
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 16.dp, end = 18.dp)
+                .padding(top = settingsTop, end = settingsEnd)
                 .size(18.dp)
                 .clickable { onSettings() }
         )
 
         CurveDecoration(
             modifier = Modifier
-                .width(220.dp)
-                .height(60.dp)
+                .width(curveWidth)
+                .height(curveHeight)
                 .align(Alignment.TopEnd)
-                .padding(top = 42.dp, end = 6.dp)
+                .padding(top = curveTop, end = curveEnd)
         )
 
         Column(
             modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 22.dp, end = 22.dp)
-                .offset(y = (-22).dp)
+                .align(Alignment.TopStart)
+                .padding(start = headlineStart, top = headlineTop)
         ) {
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
@@ -91,7 +102,7 @@ fun HomeDefaultScreen(
         BottomNav(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 22.dp)
+                .padding(bottom = bottomNavPadding)
                 .fillMaxWidth()
                 .padding(horizontal = 56.dp),
             onFeed = onFeed,
