@@ -36,11 +36,15 @@ fun HomeDefaultScreen(
     ) {
         val settingsTop = maxHeight * 0.038f
         val settingsEnd = maxWidth * 0.07f
+
         val curveTop = maxHeight * 0.065f
+        val curveEnd = maxWidth * 0.02f
         val curveWidth = maxWidth * 0.62f
         val curveHeight = maxHeight * 0.078f
+
         val headlineTop = maxHeight * 0.36f
         val headlineStart = maxWidth * 0.09f
+
         val bottomNavPadding = maxHeight * 0.05f
 
         Image(
@@ -58,21 +62,20 @@ fun HomeDefaultScreen(
                 .width(curveWidth)
                 .height(curveHeight)
                 .align(Alignment.TopEnd)
-                .padding(top = curveTop)
+                .padding(top = curveTop, end = curveEnd)
         )
 
         Column(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = headlineStart)
-                .padding(top = headlineTop)
+                .padding(start = headlineStart, top = headlineTop)
         ) {
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = "Shake",
-                    fontSize = 54.sp,
+                    fontSize = 56.sp,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = (-1.4).sp
+                    letterSpacing = (-1.2).sp
                 )
 
                 Spacer(Modifier.width(4.dp))
@@ -81,8 +84,8 @@ fun HomeDefaultScreen(
                     painter = painterResource(id = R.drawable.ic_eeum),
                     contentDescription = "eeum icon",
                     modifier = Modifier
-                        .size(28.dp)
-                        .offset(y = 4.dp)
+                        .size(30.dp)
+                        .offset(y = 5.dp)
                 )
             }
 
@@ -90,8 +93,8 @@ fun HomeDefaultScreen(
 
             Text(
                 text = "to receive someone’s letter\nanswer with music",
-                fontSize = 12.sp,
-                lineHeight = 17.sp,
+                fontSize = 13.sp,
+                lineHeight = 18.sp,
                 color = Color(0xFF8E8E8E)
             )
         }
